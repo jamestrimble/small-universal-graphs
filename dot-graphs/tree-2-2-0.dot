@@ -1,0 +1,6 @@
+graph G {
+  node[label="", shape=circle]
+  0;
+  1;
+  1 -- 0;
+}

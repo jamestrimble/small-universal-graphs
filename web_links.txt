@@ -1,0 +1,2 @@
+https://math.stackexchange.com/questions/3246874/what-is-the-minimal-possible-size-of-an-n-universal-graph
+http://users.cecs.anu.edu.au/~bdm/data/graphs.html
