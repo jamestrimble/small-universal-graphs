@@ -13,6 +13,7 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{amsthm}
 \usetikzlibrary{snakes,arrows,shapes}
 \usepackage{amsmath}
 %
@@ -20,20 +21,30 @@
 \begin{document}
 \newcommand{\calF}{\ensuremath{\mathcal{F}}}
 
+\newtheorem{proposition}{Proposition}
+
 \maketitle
 %
+\begin{abstract}
+Using the results of brute-force computational experiments, we give for $0 \leq
+k \leq 5$ the minimum number of vertices $f(k)$ in a graph containing all
+$k$-vertex graphs as induced subgraphs.  We give the corresponding results for
+$0 \leq k \leq 6$ for graphs containing all trees on $k$ vertices.  We also show
+that $13 \leq f(6) \leq 15$.
+\end{abstract}
+
 \section{Introduction}
 
 Given a collection $\calF$ of graphs, graph $G$ is \emph{induced
 universal} for $\calF$ if and only if each element of $\calF$ is an induced
 subgraph of $G$.  Graph $G$ is a \emph{minimal} induced universal graph
-for $\calF$ is it has as few vertices as possible.  We write $f(k)$ to denote
+for $\calF$ if it has as few vertices as possible.  We write $f(k)$ to denote
     the order (number of vertices) of a minimal induced universal graph for the
     family of all graphs on $k$ vertices.  Moon showed that $f(k) \leq 2^{(k-1)/2}$
     \cite{moon_1965}, and Alon showed that $f(k) = (1 + o(1))2^{(k-1)/2}$
     \cite{alon2017asymptotically}.  There is an extensive literature on bounds
     on the order of minimal induced universal subgraphs for many families of
-    graph; see the references in \cite{alon2017asymptotically}.  However, I am
+    graphs; see the references in \cite{alon2017asymptotically}.  However, I am
     not aware of any existing systematic attempts to find exact values for
     families of small graphs.  This paper presents exact values of $f(k)$ for
     $k \leq 5$, obtained by brute-force computational search.  The
@@ -43,7 +54,8 @@ for $\calF$ is it has as few vertices as possible.  We write $f(k)$ to denote
 
 \section{Method}
 
-A simple brute-force approach was used to find the set of
+Given values of $k$ and $n$,
+a simple brute-force approach was used to find the set of
 $n$-vertex graphs that are induced universal for the family $\calF$ of all $k$-vertex
 graphs.  Each possible $n$-vertex graph $G$ from Brendan McKay's lists of
 graphs\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/graphs.html}} was
@@ -62,7 +74,9 @@ the first two graphs tested.
 
 The full set of experiments described in this paper, run sequentially, required
 around 14 million calls to the subgraph isomorphism algorithm and took around
-12 minutes to complete on a laptop.
+12 minutes to complete on a laptop.  \footnote{The code and results from this
+paper, including lists of minimal induced universal graphs graph6 format, are
+available from \url{https://github.com/jamestrimble/small-universal-graphs}}.
 
 \section{Results}
 
@@ -343,9 +357,68 @@ respectively.
 %
 \end{tikzpicture}
 \label{fig:graphs}
-\caption{Induced universal graphs for the families of all
+\caption{Minimal induced universal graphs for the families of all
 graphs with 3, 4, and 5 vertices}
 \end{figure}
+
+\section{Bounds on $f(6)$}
+
+To give an upper bound of 15 on $f(6)$, Figure~\ref{fig:adjmat15} shows the
+adjacency matrix of a 15-vertex graph that is induced universal for the family
+of all graphs on six vertices.  This was generated using a specialised random
+graph generator.  We number the vertices from zero; the generator makes the
+$k$ vertices numbered $0$ to $k-1$ a clique, and the $k$ vertices numbered $k-1$ to $2k-2$ an
+independent set.  Each possible edge that is not involved in either the clique
+or the independent set is added with probability $1/2$.  It was only necessary
+to generate 53 graphs with this generator to find a solution.
+
+\begin{figure}[h]
+\centering
+\verb|0 1 1 1 1 1 0 0 0 1 1 0 0 0 1| \\
+\verb|1 0 1 1 1 1 0 0 0 0 1 1 1 1 1| \\
+\verb|1 1 0 1 1 1 1 0 0 1 0 0 1 0 0| \\
+\verb|1 1 1 0 1 1 1 1 1 1 0 0 0 0 0| \\
+\verb|1 1 1 1 0 1 1 1 0 1 1 1 1 0 0| \\
+\verb|1 1 1 1 1 0 0 0 0 0 0 0 0 0 1| \\
+\verb|0 0 1 1 1 0 0 0 0 0 0 0 0 1 0| \\
+\verb|0 0 0 1 1 0 0 0 0 0 0 1 1 1 1| \\
+\verb|0 0 0 1 0 0 0 0 0 0 0 1 1 1 0| \\
+\verb|1 0 1 1 1 0 0 0 0 0 0 1 0 0 0| \\
+\verb|1 1 0 0 1 0 0 0 0 0 0 0 1 0 1| \\
+\verb|0 1 0 0 1 0 0 1 1 1 0 0 0 1 0| \\
+\verb|0 1 1 0 1 0 0 1 1 0 1 0 0 1 1| \\
+\verb|0 1 0 0 0 0 1 1 1 0 0 1 1 0 0| \\
+\verb|1 1 0 0 0 1 0 1 0 0 1 0 1 0 0|
+\caption{The adjacency matrix of a 15-vertex induced universal graph for the family of all
+six-vertex graphs}
+\label{fig:adjmat15}
+\end{figure}
+
+For $k > 5$, it is straightforward to increase by 1 the lower bound by ``bof'' from the previous
+section.
+
+\begin{proposition}
+    $f(k) > 2k + 1$ for all $k > 5$.
+\end{proposition}
+\begin{proof}
+    Suppose, for contradition, that $G$ is an induced universal graph on $2k$
+    vertices for the family of all graphs on $k$ vertices.  Graph $G$ must have
+    $K_k$ and $I_k$ as induced sugraphs.  This clique and independent set must
+    overlap by exactly one vertex (otherwise, as in the proof by ``bof'' from
+    the previous section, $G$ would be a split graph and would not have $C_4$
+    as an induced subgraph).   Thus we can partition the vertices of $G$ into
+    three sets: a clique $S_1$, an independent set $S_2$, and a set $S_3$
+    containing the single remaining vertex.
+
+    Let $S$ be a set of vertices such that the subgraph of $G$ induced by $S$
+    is isomorphic to the cycle graph $C_k$.  $S$ may contain at most two vertices
+    from $S_1$, and these must be adjacent in the induced cycle.  Trivially,
+    $S$ can contain at most one vertex from $S_3$.  Hence, $S$ must contain at
+    least $k-3$ vertices from $S_2$.  At least two of these vertices must be adjacent
+    in the induced $C_k$.  Since $S_2$ is an independent set in $G$, we have a contradiction.
+\end{proof}
+
+Thus, we have that $13 \leq f(6) \leq 15$.
 
 \section{Trees}
 
