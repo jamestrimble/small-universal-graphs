@@ -44,16 +44,56 @@ def start():
     if not isinstance(patterns, list):
         patterns = [patterns]
 
-    patterns.sort(key=lambda G: -len(induced_subgraph_isomorphism(G, G, True)))
+    #patterns.sort(key=lambda G: -len(induced_subgraph_isomorphism(G, G, True)))
 
+    print("{} patterns".format(len(patterns)))
+    overall_best = -1
     for i in range(iters):
+        score_cache = {}
         T = random_graph(nT, nP)
-        if all(iso(P, T) for P in patterns):
-            for row in T._adj_mat:
-                print(" ".join(str(int(x)) for x in row))
-            print('success', nP, nT, i)
-            exit(0)
-    print("no luck", nP, nT)
+        best = -1
+        for j in range(1000): #range(i * 10):
+            v, w = choose_edge_to_change(T, nP)
+            change_an_edge(T, v, w)
+            flat_adj_mat = tuple(item for row in T._adj_mat for item in row)
+            if flat_adj_mat in score_cache:
+                score = score_cache[flat_adj_mat]
+            else:
+                score = sum(len(iso(P, T)) for P in patterns)
+                score_cache[flat_adj_mat] = score
+            if score < best:
+                # The change lowered the score, so revert it.
+                change_an_edge(T, v, w)
+            elif score > best:
+                best = score
+                if best > overall_best:
+                    overall_best = best
+            print(score, best, overall_best, " ", len(patterns))
+            if score == len(patterns):
+                print()
+                for row in T._adj_mat:
+                    print(" ".join(str(int(x)) for x in row))
+                print('success', nP, nT, i)
+                exit(0)
+        print()
+
+
+def change_an_edge(G, v, w):
+    G._adj_mat[v][w] = not G._adj_mat[v][w]
+    G._adj_mat[w][v] = not G._adj_mat[w][v]
+
+
+def choose_edge_to_change(G, nP):
+    while True:
+        v = random.randrange(G.number_of_nodes())
+        w = random.randrange(G.number_of_nodes())
+        if v == w:
+            continue
+        if v < nP and w < nP:
+            continue
+        if v >= nP-1 and w >= nP-1 and v < nP*2-1 and w < nP*2-1:
+            continue
+        return v, w
 
 
 if __name__ == "__main__":
