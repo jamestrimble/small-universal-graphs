@@ -32,34 +32,34 @@ def iso(P, T):
 
 def start():
     if len(sys.argv) != 5:
-        print("Usage: python3 {} NP NT iters seed".format(sys.argv[0]))
+        print("Usage: python3 {} NP NT iters_per_T seed".format(sys.argv[0]))
         exit(1)
 
     nP = int(sys.argv[1])
     nT = int(sys.argv[2])
-    iters = int(sys.argv[3])
+    iters_per_T = int(sys.argv[3])
     random.seed(int(sys.argv[4]))
 
     patterns = [G for G, _ in read_all_graphs(nP)]
     if not isinstance(patterns, list):
         patterns = [patterns]
 
-    #patterns.sort(key=lambda G: -len(induced_subgraph_isomorphism(G, G, True)))
+    patterns.sort(key=lambda G: -len(induced_subgraph_isomorphism(G, G, True)))
 
-    print("{} patterns".format(len(patterns)))
+#    print("{} patterns".format(len(patterns)))
     overall_best = -1
-    for i in range(iters):
+    while True:
         score_cache = {}
         T = random_graph(nT, nP)
         best = -1
-        for j in range(1000): #range(i * 10):
+        for j in range(iters_per_T): #range(i * 10):
             v, w = choose_edge_to_change(T, nP)
             change_an_edge(T, v, w)
             flat_adj_mat = tuple(item for row in T._adj_mat for item in row)
             if flat_adj_mat in score_cache:
                 score = score_cache[flat_adj_mat]
             else:
-                score = sum(len(iso(P, T)) for P in patterns)
+                score = calc_score(T, patterns, best)
                 score_cache[flat_adj_mat] = score
             if score < best:
                 # The change lowered the score, so revert it.
@@ -68,14 +68,24 @@ def start():
                 best = score
                 if best > overall_best:
                     overall_best = best
-            print(score, best, overall_best, " ", len(patterns))
+#            print(score, best, overall_best, " ", len(patterns))
             if score == len(patterns):
                 print()
                 for row in T._adj_mat:
                     print(" ".join(str(int(x)) for x in row))
-                print('success', nP, nT, i)
+                print('success', nP, nT)
                 exit(0)
-        print()
+#        print()
+
+
+def calc_score(T, patterns, best):
+    score = len(patterns)
+    for P in patterns:
+        if not iso(P, T):
+            score -= 1
+            if score < best:
+                return -1
+    return score
 
 
 def change_an_edge(G, v, w):
