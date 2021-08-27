@@ -16,6 +16,9 @@
 \usepackage{amsthm}
 \usetikzlibrary{snakes,arrows,shapes}
 \usepackage{amsmath}
+
+\usepackage{caption}
+\captionsetup{width=0.8\textwidth,font=footnotesize}
 %
 
 \begin{document}
@@ -364,62 +367,158 @@ graphs with 3, 4, and 5 vertices}
 
 \section{Bounds on $f(6)$}
 
-To give an upper bound of 15 on $f(6)$, Figure~\ref{fig:adjmat15} shows the
-adjacency matrix of a 15-vertex graph that is induced universal for the family
+For $k > 6$, we can increase by 2 the lower bound by ``bof'' from the previous
+section.
+
+\begin{proposition}\label{f6proposition}
+    $f(k) \geq 2k + 2$ for all $k > 5$.
+\end{proposition}
+\begin{proof}
+
+    Suppose that $G$ is an induced universal graph
+    for the family of all graphs on $k$ vertices, and that $G$ has no
+    more than $2k + 1$ vertices.  Graph $G$ must have
+    $K_k$ and $I_k$ as induced sugraphs.  This clique and independent set may
+    overlap by no more than one vertex.
+    Therefore it is possible to partition the vertices of $G$ into
+    three sets: a clique $S_1$,
+    an independent set $S_2$, and a set $S_3$
+    containing at most 2 vertices.
+
+    We will show that that $G$ can contain as an induced subgraph at most
+    one of the complementary graphs in Figure~\ref{fig:boundproof}, which we
+    call $H$ and $H'$ respectively.
+    First, let $G_1$ be an induced
+    subgraph of $G$ that is isomorphic to $H$.  Since there are
+    no edges between the two three-vertex cliques in $G_1$, it must be the case that the
+    vertex set of at least one of these cliques does not intersect $S_1$.
+    Since $S_2$ is an independent set in $G$, this clique must have exactly
+    one vertex in $S_2$ and two vertices in $S_3$.  We can deduce, then, that
+    $S_3$ contains exactly two vertices, and that these vertices are adjacent in $G$.
+
+\begin{figure}[h]
+    \centering
+
+% \begin{tikzpicture}[>=latex',line join=bevel]
+%   \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.5cm]
+%   \pgfsetlinewidth{.5bp}
+%   \node at (0,2.9) (1) {};
+%   \node at (0,2) (2) {};
+%   \node at (0,1.1) (3) {};
+%   \node at (1.1,2.9) (4) {};
+%   \node at (1.1,2) (5) {};
+%   \node at (1.1,1.1) (6) {};
+%   \draw (1) -- (2) -- (3);
+%   \draw (3) to [out=140,in=220] (1);
+%   \draw (4) -- (5) -- (6);
+%   \draw (6) to [out=40,in=-40] (4);
+%   \draw (1) -- (4);
+%   \draw (1) -- (5);
+%   \draw (1) -- (6);
+%   \draw (2) -- (4);
+%   \draw (2) -- (5);
+%   \draw (2) -- (6);
+%   \draw (3) -- (4);
+%   \draw (3) -- (5);
+%   \draw (3) -- (6);
+% \end{tikzpicture}
+% \qquad \qquad
+% \begin{tikzpicture}
+%   \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.5cm]
+%   \pgfsetlinewidth{.5bp}
+%   \node at (0,2.9) (1) {};
+%   \node at (0,2) (2) {};
+%   \node at (0,1.1) (3) {};
+%   \node at (1.1,2.9) (4) {};
+%   \node at (1.1,2) (5) {};
+%   \node at (1.1,1.1) (6) {};
+% \end{tikzpicture}
+% \qquad \qquad
+\begin{tikzpicture}[>=latex',line join=bevel]
+  \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.5cm]
+  \pgfsetlinewidth{.5bp}
+  \node at (0,2.9) (1) {};
+  \node at (0,2) (2) {};
+  \node at (0,1.1) (3) {};
+  \node at (1.1,2.9) (4) {};
+  \node at (1.1,2) (5) {};
+  \node at (1.1,1.1) (6) {};
+  \draw (1) -- (2) -- (3);
+  \draw (3) to [out=140,in=220] (1);
+  \draw (4) -- (5) -- (6);
+  \draw (6) to [out=140,in=220] (4);
+\end{tikzpicture}
+\qquad \qquad
+\begin{tikzpicture}[>=latex',line join=bevel]
+  \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.5cm]
+  \pgfsetlinewidth{.5bp}
+  \node at (0,2.9) (1) {};
+  \node at (0,2) (2) {};
+  \node at (0,1.1) (3) {};
+  \node at (1.1,2.9) (4) {};
+  \node at (1.1,2) (5) {};
+  \node at (1.1,1.1) (6) {};
+  \draw (1) -- (4);
+  \draw (1) -- (5);
+  \draw (1) -- (6);
+  \draw (2) -- (4);
+  \draw (2) -- (5);
+  \draw (2) -- (6);
+  \draw (3) -- (4);
+  \draw (3) -- (5);
+  \draw (3) -- (6);
+\end{tikzpicture}
+%%
+\caption{If $k > 5$ and $G$ is a graph on $2k + 1$ or fewer vertices, then
+$G$ cannot have as induced subgraphs all four of the following graphs: the
+clique $K_k$, the independent set $I_k$, and
+the two graphs shown. See the the proof of Proposition~\ref{f6proposition}}.
+\label{fig:boundproof}
+\end{figure}
+
+    Now consider graph $H'$.  Since $H'$ is an induced subgraph of $G$, it
+    follows by taking complements of $H'$ and $G$ that $H$ is an induced
+    subgraph of $G'$ (the complement of $G$).  We can repeat the argument
+    of the previous paragraph with the roles of $S_1$ and $S_2$ reversed to
+    show that the two vertices in $S_3$ must be adjacent in the complement of
+    $G$, and therefore not adjacent in $G$.  Since we previously showed that
+    these vertices are adjacent in $G$, we have a contradiction.
+\end{proof}
+
+To give a lower bound of 14 on $f(6)$, Figure~\ref{fig:adjmat14} shows the
+adjacency matrix of a 14-vertex graph that is induced universal for the family
 of all graphs on six vertices.  This was generated using a specialised random
 graph generator.  We number the vertices from zero; the generator makes the
 $k$ vertices numbered $0$ to $k-1$ a clique, and the $k$ vertices numbered $k-1$ to $2k-2$ an
 independent set.  Each possible edge that is not involved in either the clique
 or the independent set is added with probability $1/2$.  It was only necessary
-to generate 53 graphs with this generator to find a solution.
+to generate 53 graphs with this generator to find a solution TODO fixme.
+
+TODO: give more details of generator
 
 \begin{figure}[h]
 \centering
-\verb|0 1 1 1 1 1 0 0 0 1 1 0 0 0 1| \\
-\verb|1 0 1 1 1 1 0 0 0 0 1 1 1 1 1| \\
-\verb|1 1 0 1 1 1 1 0 0 1 0 0 1 0 0| \\
-\verb|1 1 1 0 1 1 1 1 1 1 0 0 0 0 0| \\
-\verb|1 1 1 1 0 1 1 1 0 1 1 1 1 0 0| \\
-\verb|1 1 1 1 1 0 0 0 0 0 0 0 0 0 1| \\
-\verb|0 0 1 1 1 0 0 0 0 0 0 0 0 1 0| \\
-\verb|0 0 0 1 1 0 0 0 0 0 0 1 1 1 1| \\
-\verb|0 0 0 1 0 0 0 0 0 0 0 1 1 1 0| \\
-\verb|1 0 1 1 1 0 0 0 0 0 0 1 0 0 0| \\
-\verb|1 1 0 0 1 0 0 0 0 0 0 0 1 0 1| \\
-\verb|0 1 0 0 1 0 0 1 1 1 0 0 0 1 0| \\
-\verb|0 1 1 0 1 0 0 1 1 0 1 0 0 1 1| \\
-\verb|0 1 0 0 0 0 1 1 1 0 0 1 1 0 0| \\
-\verb|1 1 0 0 0 1 0 1 0 0 1 0 1 0 0|
-\caption{The adjacency matrix of a 15-vertex induced universal graph for the family of all
+\small
+\verb|0 1 1 1 1 1 0 1 1 0 0 0 1 0| \\
+\verb|1 0 1 1 1 1 1 1 1 1 1 0 0 1| \\
+\verb|1 1 0 1 1 1 0 1 1 0 1 0 1 0| \\
+\verb|1 1 1 0 1 1 1 0 0 0 1 1 0 0| \\
+\verb|1 1 1 1 0 1 0 1 0 0 0 0 0 0| \\
+\verb|1 1 1 1 1 0 0 0 0 0 0 1 0 1| \\
+\verb|0 1 0 1 0 0 0 0 0 0 0 1 1 1| \\
+\verb|1 1 1 0 1 0 0 0 0 0 0 1 1 0| \\
+\verb|1 1 1 0 0 0 0 0 0 0 0 0 1 0| \\
+\verb|0 1 0 0 0 0 0 0 0 0 0 1 0 1| \\
+\verb|0 1 1 1 0 0 0 0 0 0 0 1 1 0| \\
+\verb|0 0 0 1 0 1 1 1 0 1 1 0 0 1| \\
+\verb|1 0 1 0 0 0 1 1 1 0 1 0 0 0| \\
+\verb|0 1 0 0 0 1 1 0 0 1 0 1 0 0|
+\caption{The adjacency matrix of a 14-vertex induced universal graph for the family of all
 six-vertex graphs}
-\label{fig:adjmat15}
+\label{fig:adjmat14}
 \end{figure}
 
-For $k > 5$, it is straightforward to increase by 1 the lower bound by ``bof'' from the previous
-section.
-
-\begin{proposition}
-    $f(k) > 2k + 1$ for all $k > 5$.
-\end{proposition}
-\begin{proof}
-    Suppose, for contradition, that $G$ is an induced universal graph on $2k$
-    vertices for the family of all graphs on $k$ vertices.  Graph $G$ must have
-    $K_k$ and $I_k$ as induced sugraphs.  This clique and independent set must
-    overlap by exactly one vertex (otherwise, as in the proof by ``bof'' from
-    the previous section, $G$ would be a split graph and would not have $C_4$
-    as an induced subgraph).   Thus we can partition the vertices of $G$ into
-    three sets: a clique $S_1$, an independent set $S_2$, and a set $S_3$
-    containing the single remaining vertex.
-
-    Let $S$ be a set of vertices such that the subgraph of $G$ induced by $S$
-    is isomorphic to the cycle graph $C_k$.  $S$ may contain at most two vertices
-    from $S_1$, and these must be adjacent in the induced cycle.  Trivially,
-    $S$ can contain at most one vertex from $S_3$.  Hence, $S$ must contain at
-    least $k-3$ vertices from $S_2$.  At least two of these vertices must be adjacent
-    in the induced $C_k$.  Since $S_2$ is an independent set in $G$, we have a contradiction.
-\end{proof}
-
-Thus, we have that $13 \leq f(6) \leq 15$.
+Thus, we have that $f(6) = 14$.
 
 \section{Trees}
 
@@ -531,9 +630,9 @@ all $k$-vertex trees as induced subgraphs.}
 %
 \end{tikzpicture}
 
-\label{fig:trees}
 \caption{A universal graph for the family of all
 trees with 6 vertices}
+\label{fig:trees}
 \end{figure}
 
 \bibliographystyle{abbrv}
