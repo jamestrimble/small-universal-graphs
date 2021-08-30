@@ -1,1 +1,3 @@
 Cite https://math.stackexchange.com/questions/75209/what-is-the-smallest-graph-that-contains-all-non-isomorphic-4-node-and-5-node-co . This gives some results from an exhaustive search for induced universal graphs for families of connected graphs with k vertices.  I'll need to change my introduction to reflect the fact that this kind of search *has* been done before.
+
+Mention minimum common supergraph. Cite paper(s)
