@@ -12,13 +12,16 @@ def read_all_graphs(n):
             yield (from_graph6_bytes(g), g)
 
     
-def random_graph(n, nP):
+def random_graph(n, nP, independent_set_start):
     G = Graph(n)
     for v in range(n):
         for w in range(v):
             if v < nP and w < nP:
                 G.add_edge(v, w)
-            elif v >= nP-1 and w >= nP-1 and v < nP*2-1 and w < nP*2-1:
+            elif (v >= independent_set_start and
+                  w >= independent_set_start and
+                  v < independent_set_start + nP and
+                  w < independent_set_start + nP):
                 pass
             elif random.random() < .5:
                 G.add_edge(v, w)
@@ -31,14 +34,18 @@ def iso(P, T):
 
 
 def start():
-    if len(sys.argv) != 5:
-        print("Usage: python3 {} NP NT iters_per_T seed".format(sys.argv[0]))
+    if len(sys.argv) < 5:
+        print("Usage: python3 {} NP NT iters_per_T seed [independent-set-start]".format(sys.argv[0]))
         exit(1)
 
     nP = int(sys.argv[1])
     nT = int(sys.argv[2])
     iters_per_T = int(sys.argv[3])
     random.seed(int(sys.argv[4]))
+    if len(sys.argv) == 6:
+        independent_set_start = int(sys.argv[5])
+    else:
+        independent_set_start = nP - 1
 
     patterns = [G for G, _ in read_all_graphs(nP)]
     if not isinstance(patterns, list):
@@ -50,10 +57,10 @@ def start():
     overall_best = -1
     while True:
         score_cache = {}
-        T = random_graph(nT, nP)
+        T = random_graph(nT, nP, independent_set_start)
         best = -1
         for j in range(iters_per_T): #range(i * 10):
-            v, w = choose_edge_to_change(T, nP)
+            v, w = choose_edge_to_change(T, nP, independent_set_start)
             change_an_edge(T, v, w)
             flat_adj_mat = tuple(item for row in T._adj_mat for item in row)
             if flat_adj_mat in score_cache:
@@ -68,7 +75,7 @@ def start():
                 best = score
                 if best > overall_best:
                     overall_best = best
-#            print(score, best, overall_best, " ", len(patterns))
+            print(score, best, overall_best, " ", len(patterns))
             if score == len(patterns):
                 print()
                 for row in T._adj_mat:
@@ -93,7 +100,7 @@ def change_an_edge(G, v, w):
     G._adj_mat[w][v] = not G._adj_mat[w][v]
 
 
-def choose_edge_to_change(G, nP):
+def choose_edge_to_change(G, nP, independent_set_start):
     while True:
         v = random.randrange(G.number_of_nodes())
         w = random.randrange(G.number_of_nodes())
@@ -101,7 +108,10 @@ def choose_edge_to_change(G, nP):
             continue
         if v < nP and w < nP:
             continue
-        if v >= nP-1 and w >= nP-1 and v < nP*2-1 and w < nP*2-1:
+        if (v >= independent_set_start and
+              w >= independent_set_start and
+              v < independent_set_start + nP and
+              w < independent_set_start + nP):
             continue
         return v, w
 

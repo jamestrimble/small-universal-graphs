@@ -114,7 +114,7 @@ The values $f(1)$, $f(2)$ and $f(3)$ are equal to to the simple lower bound $2k
   \cite{math_se_question}.  The values $f(4)$ and $f(5)$ are equal to a lower
   bound given in a comment by ``bof'' on the same question: $f(k) \geq 2k$ if $k
   \geq 4$.  (For $k < 10$, this bound improves upon Moon's lower bound $f(k)
-  \leq 2^{(k-1)/2}$.) To briefly summarise the proof, if $k \leq 2k$ then $G$
+  \leq 2^{(k-1)/2}$.) To briefly summarise the proof, if $f(k) \leq 2k$ then $G$
   must be a split graph (that is, a graph whose vertices can be partitioned
   into a clique and an independent set); therefore, $G$ cannot contain the
   cycle $C_4$ as an induced subgraph.  An example of an 8-vertex induced
@@ -513,13 +513,18 @@ of all graphs on six vertices.  This was generated using a simple local search
 algorithm.  We begin by generating a random graph on 14 vertices as follows.
 We number the vertices from zero; the generator makes the
 $k$ vertices numbered $0$ to $k-1$ a clique, and the $k$ vertices numbered $k-1$ to $2k-2$ an
-independent set.  Each possible edge that is not involved in either the clique
+independent set.\footnote{The clique and the independent set thus have one vertex
+in common.  The proof of Proposition~\ref{f6proposition} can be modified straightforwardly
+to show that there is no 14-vertex induced universal graph for this family of graphs
+that contains a 6-vertex clique and a 6-vertex independent set as
+induced subgraphs with disjoint vertex sets.}
+Each possible edge that is not involved in either the clique
 or the independent set is added with probability $1/2$.
 We then repeatedly ``flip'' the status of a random edge from present to absent
 or vice versa, but always leave the large clique and independent set intact.
 After each flip, we count the number of 156 graphs on 6 vertices that are isomorphic
-to a subgraph of our 14-vertex graph.  If the most recent flip resulted in a decrease
-in this number, we revert it.  After each 1000 flips, we restart the algorithm
+to a subgraph of our 14-vertex graph.  If the most recent flip decreased
+this number, we revert it.  After each 1000 flips, we restart the algorithm
 with a new random graph.
 
 \begin{figure}[htb]
@@ -549,8 +554,14 @@ six-vertex graphs}
 By Proposition~\ref{f6proposition}, we have $f(7) \geq 16$.  Figure~\ref{fig:adjmat18}
 shows the adjacency matrix of an 18-vertex induced universal
 graph for the family of all seven-vertex graphs. This was generated with 
-the heuristic described in Section~\ref{sec:f6}, with 10000 rather than 1000
-edge-flips permitted before each restart.
+the heuristic described in Section~\ref{sec:f6}, with two modifications.
+First, 10000 rather than 1000
+edge-flips were permitted before each restart, as this was found to be more effective
+in a preliminary run of the experiment.  Second, the overlapping six-vertex clique
+and independent set were replaced with a clique on seven vertices and an independent
+set on seven vertices.  Again, these had one vertex in common.  (We also tried making
+the clique and independent set vertex-disjoint, but did not find an 18-vertex solution
+in four hours with this approach.)
 
 Thus we have $16 \leq f(7) \leq 18$.
 
@@ -585,6 +596,12 @@ seven-vertex graphs}
 Table~\ref{tab:treeresults} gives the order $t(k)$ of a minimal induced universal graph for
 the family of $k$-vertex trees, and the number $T(k)$ of such graphs.  Figure~\ref{fig:trees}
 shows one of the 66 minimal induced universal graphs for the family of 6-vertex trees.
+
+\section{Acknowledgements}
+
+I would like to thank Brendan McKay for helpful feedback on this paper, and Persi
+Diaconis for introducing me to induced universal graphs and for interesting email
+discussions on related topics.
 
 \begin{table}[h!]
 \centering
