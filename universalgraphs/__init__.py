@@ -159,7 +159,7 @@ def from_graph6_bytes(bytes_in):
     n, data = data_to_n(data)
     nd = (n * (n - 1) // 2 + 5) // 6
     if len(data) != nd:
-        raise NetworkXError(
+        raise ValueError(
             f"Expected {n * (n - 1) // 2} bits but got {len(data) * 6} in graph6"
         )
 
