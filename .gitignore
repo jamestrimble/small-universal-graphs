@@ -8,3 +8,7 @@ __pycache__/
 *.out
 .*.swp
 graphs/
+geng
+gentreeg
+showg
+glasgow_subgraph_solver
