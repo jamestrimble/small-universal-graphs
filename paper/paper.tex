@@ -15,8 +15,13 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usepackage{amsthm}
-\usetikzlibrary{snakes,arrows,shapes}
+\usetikzlibrary{decorations, decorations.pathreplacing, decorations.pathmorphing,
+    calc, backgrounds, positioning, tikzmark, patterns, matrix, fit, graphs,
+    snakes, arrows, shapes, calligraphy}
+%\usetikzlibrary{snakes,arrows,shapes}
 \usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{cleveref}
 
 \usepackage{caption}
 \captionsetup{width=0.8\textwidth,font=footnotesize}
@@ -25,6 +30,28 @@
 \newcommand{\calF}{\ensuremath{\mathcal{F}}}
 
 \newtheorem{proposition}{Proposition}
+
+\definecolor{uofguniversityblue}{rgb}{0, 0.219608, 0.396078}
+
+\definecolor{uofgheather}{rgb}{0.356863, 0.32549, 0.490196}
+\definecolor{uofgaquamarine}{rgb}{0.603922, 0.72549, 0.678431}
+\definecolor{uofgslate}{rgb}{0.309804, 0.34902, 0.380392}
+\definecolor{uofgrose}{rgb}{0.823529, 0.470588, 0.709804}
+\definecolor{uofgmocha}{rgb}{0.709804, 0.564706, 0.47451}
+
+\definecolor{uofglawn}{rgb}{0.517647, 0.741176, 0}
+\definecolor{uofgcobalt}{rgb}{0, 0.615686, 0.92549}
+\definecolor{uofgturquoise}{rgb}{0, 0.709804, 0.819608}
+\definecolor{uofgsunshine}{rgb}{1.0, 0.862745, 0.211765}
+\definecolor{uofgpumpkin}{rgb}{1.0, 0.72549, 0.282353}
+\definecolor{uofgthistle}{rgb}{0.584314, 0.070588, 0.447059}
+\definecolor{uofgpillarbox}{rgb}{0.701961, 0.047059, 0}
+\definecolor{uofglavendar}{rgb}{0.356863, 0.301961, 0.580392}
+
+\definecolor{uofgsandstone}{rgb}{0.321569, 0.278431, 0.231373}
+\definecolor{uofgforest}{rgb}{0, 0.317647, 0.2}
+\definecolor{uofgburgundy}{rgb}{0.490196, 0.133333, 0.223529}
+\definecolor{uofgrust}{rgb}{0.603922, 0.227451, 0.023529}
 
 \begin{document}
 
@@ -47,16 +74,145 @@ few vertices as possible.  The problem of finding a minimal induced universal gr
 of a family of graphs generalises the minimum common supergraph problem
 \cite{DBLP:journals/computing/BunkeJK00}.
 
-We write $f(k)$ to denote the order (that is, the
-number of vertices) of a minimal induced universal graph for the family of all
-graphs on $k$ vertices.  Moon showed that $f(k) \leq 2^{(k-1)/2}$
+We write $\calF(k)$ to denote the family of all graphs on $k$ vertices,
+and we write $f(k)$ to denote the order (that is, the
+number of vertices) of a minimal induced universal graph for $\calF(k)$.
+We write $F(k)$ to denote the number of non-isomorphic graphs of order $f(k)$
+that are induced universal for $f(k)$.
+To give an example, we have $f(3)=5$ and $F(3)=5$. All five of the minimal induced universal graphs
+for $\calF(3)$ are shown in \Cref{fig:univ3a}. \Cref{fig:univ3b} shows the four
+graphs in $\calF(3)$ as induced subgraphs of a single induced universal graph.
+
+Moon showed that $f(k) \leq 2^{(k-1)/2}$
 \cite{moon_1965}, and Alon showed that $f(k) = (1 + o(1))2^{(k-1)/2}$
 \cite{alon2017asymptotically}.  There is an extensive literature on bounds on
 the order of minimal induced universal subgraphs for many families of graphs;
 see the references in \cite{alon2017asymptotically}.
 However, to my knowledge the only
-existing systematic attempt to find exact values for families of small
-graphs is a Mathematics Stack Exchange answer by James Preen that presents results for families of small connected graphs obtained by brute-force search with the Maple programming language \cite{preen_math_se}.
+existing systematic attempt to find \emph{exact} values for families of small
+graphs is an answer by James Preen on the Mathematics Stack Exchange website that
+presents results for families of small connected graphs obtained by brute-force
+search with the Maple programming language \cite{preen_math_se}.
+
+\begin{figure}[htb]
+    \centering
+
+    \subfigure[][The five induced universal graphs of order 5 for \calF(3) (that is, for the family of all 3-vertex graphs)] {
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1,2,3,4;
+           3 -- 0;
+           4 -- 0;
+           4 -- 1;
+           4 -- 3;
+        };
+      \end{tikzpicture}
+      \qquad
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1,2,3,4;
+          3 -- 0;
+          4 -- 0;
+          4 -- 1;
+          4 -- 2;
+          4 -- 3;
+        };
+      \end{tikzpicture}
+      \qquad
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1,2,3,4;
+          3 -- 0;
+          3 -- 1;
+          4 -- 0;
+          4 -- 2;
+          4 -- 3;
+        };
+      \end{tikzpicture}
+      \qquad
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1,2,3,4;
+          3 -- 0;
+          3 -- 1;
+          4 -- 0;
+          4 -- 1;
+          4 -- 3;
+        };
+      \end{tikzpicture}
+      \qquad
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1,2,3,4;
+          3 -- 0;
+          3 -- 1;
+          4 -- 0;
+          4 -- 1;
+          4 -- 2;
+          4 -- 3;
+        };
+      \end{tikzpicture}
+      \label{fig:univ3a}
+    }
+
+    \par\bigskip
+    \subfigure[][A demonstration that the first graph in \Cref{fig:univ3a} is induced universal
+            for $\calF(3)$.  For each graph $G$ in $\calF(3)$ ($I_3$, $K_3$, $P_3$, and
+            a graph with a single edge), an induced subgraph isomorphic to $G$ is shown in a
+            single color.] {
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1[fill=uofgpumpkin],2[fill=uofgpumpkin],3[fill=uofgpumpkin],4;
+           3 -- 0;
+           4 -- 0;
+           4 -- 1;
+           4 -- 3;
+        };
+      \end{tikzpicture}
+      \qquad
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0[fill=uofgturquoise],1,2,3[fill=uofgturquoise],4[fill=uofgturquoise];
+           4 -- 1;
+           3 --[uofgturquoise, ultra thick] 0;
+           4 --[uofgturquoise, ultra thick] 0;
+           4 --[uofgturquoise, ultra thick] 3;
+        };
+      \end{tikzpicture}
+      \qquad
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1[fill=uofgrose],2,3[fill=uofgrose],4[fill=uofgrose];
+           3 -- 0;
+           4 -- 0;
+           4 --[uofgrose, ultra thick] 1;
+           4 --[uofgrose, ultra thick] 3;
+        };
+      \end{tikzpicture}
+      \qquad
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+                clockwise=5] {
+                    0,1[fill=uofgmocha],2[fill=uofgmocha],3,4[fill=uofgmocha];
+           3 -- 0;
+           4 -- 0;
+           4 --[uofgmocha, ultra thick] 1;
+           4 -- 3;
+        };
+      \end{tikzpicture}
+      \label{fig:univ3b}
+    }
+\caption{Induced universal graphs for the family of all graphs on 3 vertices}
+\label{fig:graphs}
+\end{figure}
 
 This paper uses a brute-force approach similar to that of Preen to find minimal
 induced universal graphs for families of small \emph{general} graphs.
@@ -609,7 +765,6 @@ discussions on related topics.
  \toprule
  $k$ & $t(k)$ & $T(k)$ \\ [0.5ex]
  \midrule
- 0 & 0 & 1 \\
  1 & 1 & 1 \\
  2 & 2 & 1 \\
  3 & 3 & 1 \\
