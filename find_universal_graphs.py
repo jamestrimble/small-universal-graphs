@@ -131,10 +131,9 @@ def start():
     elif pattern_order == "almost-random":
         # Move I_{nP} and K_{nP} to the start
         patterns.sort(
-            key=lambda G: sum(sum(row) for row in G._adj_mat) == G.number_of_nodes() * (G.number_of_nodes() - 1),
+            key=lambda G: sum(sum(row) for row in G._adj_mat) in [0, G.number_of_nodes() * (G.number_of_nodes() - 1)],
             reverse=True
         )
-        patterns.sort(key=lambda G: sum(sum(row) for row in G._adj_mat) == 0, reverse=True)
     elif pattern_order == "degree":
         patterns.sort(key=lambda G: -abs(sum(sum(row) for row in G._adj_mat) - G.number_of_nodes() * (G.number_of_nodes() - 1) / 2))
 
