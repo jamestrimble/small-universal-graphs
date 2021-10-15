@@ -450,20 +450,26 @@ calls on average and a minimum of 451,287 calls in the best of the 50 runs.
 The variance in number of calls was tiny for all but the random strategy,
 with between 304,000 and 305,000 calls being required for each run.
 
-We note, first, that `degree' strategy appears to be at least as effective
-as the `automorphisms' strategy for this instance, despite the lower
-correlation observed in \Cref{fig:scatter}.  Perhaps most surprising is
-that the `almost random' strategy performed better than any of the other
-strategies.
-
 \begin{figure}[htb]
     \centering
 
     \includegraphics*[width=0.7\textwidth]{img/second-experiment-plot}
 
-    \caption{TODO}
+    \caption{Using each of our four order strategies, we ran
+        $\FuncSty{AllInducedUniversalGraphs}(\calF(5),9)$ 50 times. The figure
+        shows the number calls to the subgraph isomorphism algorithm, in thousands.
+        Horizontal lines show mean number of calls.}
 \label{fig:second-experiment}
 \end{figure}
+
+We note, first, that `degree' strategy appears to be at least as effective
+as the `automorphisms' strategy for this instance, despite the lower
+correlation observed in \Cref{fig:scatter}.  Perhaps most surprising is
+that the `almost random' strategy performed better than any of the other
+strategies.
+\Cref{tab:graphs-by-autom-count}
+
+\input{img/graphs5}
 
 \subsection{Testing the strategies: $\calF \subset \calF{5}$}
 
@@ -474,7 +480,11 @@ TODO abcdef
 
     \includegraphics*[width=0.7\textwidth]{img/second-experiment-plot-using-sample}
 
-    \caption{TODO}
+    \caption{Using each of our four order strategies, we ran
+        $\FuncSty{AllInducedUniversalGraphs}(\calF,9)$ 50 times, where
+        $\calF$ is a random subset of $\calF(5)$ containing 17 graphs. The figure
+        shows the number calls to the subgraph isomorphism algorithm, in thousands.
+        Horizontal lines show mean number of calls.}
 \label{fig:second-experiment-using-sample}
 \end{figure}
 
@@ -923,6 +933,14 @@ with a new random graph.
 \caption{The adjacency matrix of a 14-vertex induced universal graph for the family of all
 six-vertex graphs}
 \label{fig:adjmat14}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.1cm]
+      \end{tikzpicture}
+\label{fig:heuristic-regions}
 \end{figure}
 
 \section{Bounds on \texorpdfstring{$f(7)$}{f(7)}}\label{sec:f7}
