@@ -97,6 +97,8 @@ def start():
             pattern_order = "almost-random"
         elif arg == "--degree-pattern-order":
             pattern_order = "degree"
+        elif arg.startswith("--seed="):
+            random.seed(int(arg[7:]))
         else:
             if arg_count == 0:
                 graph_type = sys.argv[1]
