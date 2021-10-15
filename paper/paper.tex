@@ -22,12 +22,36 @@
 \usepackage{amsmath}
 \usepackage{subfigure}
 \usepackage{cleveref}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{algpseudocode}
 
 \usepackage{caption}
 \captionsetup{width=0.8\textwidth,font=footnotesize}
 %
 
+\crefname{algorithm}{Algorithm}{Algorithms}
+\Crefname{algorithm}{Algorithm}{Algorithms}
+\crefname{algocf}{Algorithm}{Algorithms}
+\Crefname{algocf}{Algorithm}{Algorithms}
+\crefname{figure}{Figure}{Figures}
+\Crefname{figure}{Figure}{Figures}
+\crefname{table}{Table}{Tables}
+\Crefname{table}{Table}{Tables}
+\crefname{section}{Section}{Sections}
+\Crefname{section}{Section}{Sections}
+
 \newcommand{\calF}{\ensuremath{\mathcal{F}}}
+\newcommand{\calG}{\ensuremath{\mathcal{G}}}
+\newcommand{\AlgVar}[1]{\mathit{#1}}
+
+\newcommand{\lineref}[1]{line~\ref{#1}}
+\newcommand{\codelineref}[1]{line~\ref{#1}}
+\newcommand{\linerangeref}[2]{lines~\ref{#1} to~\ref{#2}}
+\newcommand{\Lineref}[1]{Line~\ref{#1}}
+\newcommand{\Linerangeref}[2]{Lines~\ref{#1} to~\ref{#2}}
+
+% https://tex.stackexchange.com/a/184829
+\algnewcommand{\LeftComment}[1]{\(\triangleright\) #1}
 
 \newtheorem{proposition}{Proposition}
 
@@ -228,20 +252,104 @@ families of trees.
 
 \section{Generating all induced universal graphs}\label{sec:method}
 
-Given $k$ and $n$,
-I used a simple brute-force approach to find the set of
-$n$-vertex graphs that are induced universal for the family $\calF(k)$ of all $k$-vertex
-graphs.  Each possible $n$-vertex graph $G$ from Brendan McKay's lists of
-graphs\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/graphs.html}} was
-tested in turn.  I used a Python implementation of the McSplit
-algorithm \cite{DBLP:conf/ijcai/McCreeshPT17} to test whether each $k$-vertex
-graph is an induced subgraph of $G$.  Although the McSplit algorithm was designed for
-the more general maximum common induced subgraph problem, it performs well on
-the subgraph isomorphism problem if both input graphs are small.  (Although
-I have described the application of this method to families of all graphs of a given order,
-the method could easily be applied to any family $\calF$ of graphs, and indeed
-Section~\ref{sec:trees} gives results from the application of this method
-to families of trees.)
+Given $\calF$ and $n$,
+we use the brute-force approach described by Preen \cite{preen_math_se} and shown
+in \Cref{alg:brute-force} to find the set of
+$n$-vertex graphs that are induced universal for the family $\calF$.
+The function $\FuncSty{AllInducedUniversalGraphs}()$ is the entry point.
+\Lineref{TryEachG} tests in turn each candidate graph $G$ from the family
+of $n$-vertex graphs, and adds to the collection $\calG$ those that are induced universal
+for $\calF$.  The function $\FuncSty{IsInducedUniversal}()$ tests
+whether a graph $G$ is induced universal for $\calF$ by checking that
+$H$ is isomorphic to a subgraph of $G$ for each $G \in \calF$.
+
+For the collection $\calF(n)$ of candidate graphs on \lineref{TryEachG}, our
+implementation uses Brendan McKay's lists of
+graphs\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/graphs.html}}.
+These are read in \texttt{graph6}
+format\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/formats.html}}
+from a text file as the program proceeds, and therefore only one candidate
+graph at a time needs to be stored in memory.
+
+For the call $\FuncSty{InducedSubIso}()$ to an algorithm for the induced
+subgraph isomorphism decision problem on line \lineref{CallSubIso},
+our program uses a Python implementation of the McSplit
+algorithm \cite{DBLP:conf/ijcai/McCreeshPT17}.
+McSplit was designed for
+the more general maximum common induced subgraph problem,
+but it can be used for induced subgraph isomorphism with a simple
+modification: we backtrack when the calculated upper bound
+on the order of a common subgraph is less the order of graph $H$.
+This method for solving
+the subgraph isomorphism problem is very fast if both input graphs
+are small, as the graphs considered in this paper are.
+While McSplit is suitable for our purposes in this paper,
+we do not claim that it is the the fastest induced subgraph isomorphism
+solver for very small graphs; it would be useful future work to perform
+an experimental comparison with other subgraph isomorphism solvers.
+%%% (Although
+%%% I have described the application of this method to families of all graphs of a given order,
+%%% the method could easily be applied to any family $\calF$ of graphs, and indeed
+%%% Section~\ref{sec:trees} gives results from the application of this method
+%%% to families of trees.)
+
+\begin{algorithm}[h!]
+\DontPrintSemicolon
+%%% \nl $\FuncSty{Search}(\AlgVar{future},M)$ \;
+%%% \nl \Begin{
+%%% %\nl \lIf {$\AlgVar{future} = \emptyset$ \bf{and} $|M| > |\AlgVar{incumbent}|$}
+%%% \nl \lIf {$|M| > |\AlgVar{incumbent}|$}{$\AlgVar{incumbent} \gets M$} \label{StoreIncumbent}
+%%% %\nl \lIf {$\AlgVar{future} = \emptyset$}{return}
+%%% \medskip
+%%% \nl $\AlgVar{bound} \gets |M|  + \sum_{\langle \setG,\setH \rangle \in \AlgVar{future}} \min(|\setG|,|\setH|)$ \label{CalcBound} \;
+%%% \nl \lIf {$\AlgVar{bound} \leq |\AlgVar{incumbent}|$}{\KwSty{return}} \label{PruneSearch}
+%%% \medskip
+%%% \nl $\langle \setG,\setH \rangle \gets \FuncSty{SelectLabelClass}(\AlgVar{future})$ \label{SelectClass} \;
+%%% \nl $v \gets \FuncSty{SelectVertex}(\setG)$ \label{SelectVertex} \;
+%%% \nl \For {$w \in \setH$ \label{WLoop}} {
+%%% \nl    $\AlgVar{future'} \gets \emptyset$ \label{NewFuture} \;
+%%% \nl    \For {$\langle \setG',\setH'\rangle \in future$ \label{InnerLoop}}{
+%%% \nl        $\setG'' \gets \setG' \cap \N(\graphG, v) \setminus \{v\}$ \label{NewPWithEdge} \;
+%%% \nl        $\setH'' \gets \setH' \cap \N(\graphH, w) \setminus \{w\}$ \;
+%%% \nl        \If {$\setG'' \neq \emptyset$ \bf{and} $\setH'' \neq \emptyset$\label{IfNonEmpty}}{
+%%% \nl            $\AlgVar{future'} \gets \AlgVar{future'} \cup \{\langle \setG'' , \setH'' \rangle\}$ \label{AddToFutureWithEdge}}
+%%% \nl        $\setG'' \gets \setG' \cap \invN(\graphG, v) \setminus \{v\}$ \label{NewPWithoutEdge}  \;
+%%% \nl        $\setH'' \gets \setH' \cap \invN(\graphH, w) \setminus \{w\}$ \;
+%%% \nl        \If {$\setG'' \neq \emptyset$ \bf{and} $\setH'' \neq \emptyset$\label{IfNonEmpty2}}{
+%%% \nl            $\AlgVar{future'} \gets \AlgVar{future'} \cup \{\langle \setG'' , \setH'' \rangle\}$} \label{InnerLoopEnd}
+%%%        }
+%%% \nl   $\FuncSty{Search}(\AlgVar{future'},M\cup \{(v,w)\})$ \label{ExpandWithV} \;
+%%%   }
+%%% \nl $\setG' \gets \setG \setminus \{v\}$ \label{RemoveV} \;
+%%% \nl $\AlgVar{future} \gets \AlgVar{future} \setminus \{\langle \setG,\setH \rangle\}$\;
+%%% \nl \lIf {$\setG' \neq \emptyset$} {$\AlgVar{future} \gets \AlgVar{future} \cup \{\langle \setG',\setH \rangle \}$}
+%%% \nl $\FuncSty{Search}(\AlgVar{future},M)$ \label{ExpandWithoutV} \;
+%%% }
+%%% \;
+\nl $\FuncSty{IsInducedUniversal}(\calF,G)$ \label{BruteForceFun} \;
+\nl \KwData{A family of graphs $\calF$ and a graph $G$.}
+\nl \KwResult{A logical value indicating whether $G$ is induced universal for $\calF$.}
+\nl \Begin{
+\nl    \For {$H \in \calF$ \label{HLoop}}{
+\nl      \lIf {$\neg\FuncSty{InducedSubIso}(H, G)$\label{CallSubIso}}{$\KwSty{return}$~$\AlgVar{false}$}
+       }
+\nl   $\KwSty{return}$~$\AlgVar{true}$ \;
+    }
+\medskip
+\nl $\FuncSty{AllInducedUniversalGraphs}(\calF,n)$ \label{BruteForceFun} \;
+\nl \KwData{A family of graphs $\calF$ and a natural number $n$.}
+\nl \KwResult{The set of all graphs of order $n$ that are induced universal for $\calF$.}
+\nl \Begin{
+\nl    $\calG \gets \emptyset$ \;
+\nl    \For {$G \in \calF(n)$}{
+\nl      \lIf {$\FuncSty{IsInducedUniversal}(\calF,G)$\label{TryEachG}}{$\calG \gets \calG \cup \{G\}$}
+       }
+\nl   $\KwSty{return}$~$\calG$ \;
+    }
+\caption{A brute-force algorithm for finding all order-$n$ induced universal subgraphs of a family $\calF$ of graphs.
+	The entry point is $\FuncSty{AllInducedUniversalGraphs}(\calF,n)$.}
+\label{alg:brute-force}
+\end{algorithm}
 
 The full set of experiments described in this paper, run sequentially,
 took less than an hour to complete on a laptop with an Intel Core i5-6200U CPU
@@ -252,32 +360,46 @@ in graph6 format, are available from
 
 \section{Iteration order for $\calF$}\label{sec:iteration-order}
 
-When deciding whether a graph $G$ contains any element of $\calF(k)$, are
-some iteration orders of $\calF(k)$ better than others?
-For a graph $G$ that contains a copy of each element of $\calF(k)$, the iteration
-order is of no importance; we much check every element of $\calF(k)$.
-For graphs $G$ that do \emph{not} contain a copy of each element of $\calF(k)$,
-however, we would like to find an order of $\calF(k)$ such that graphs
-that are likely to fail the subgraph isomorphism test are checked early.
+When deciding on \lineref{HLoop} of the algorithm whether a graph $G$ contains
+every element of $\calF$ as an induced subgraph, are some iteration orders of
+$\calF$ better than others?  For a graph $G$ that contains a copy of each
+element of $\calF$, the iteration order is of no importance; we much check
+every element of $\calF$ before returning $\AlgVar{true}$.  For a graph $G$ that
+does \emph{not} contain a copy of each element of $\calF$, however, we would like
+to iterate over $\calF$ in an order such that graphs that are likely to fail the
+subgraph isomorphism test are checked early; that way, we can quickly return
+$\AlgVar{false}$.
 
+We begin by considering the case where $\calF = \calF(k)$ for some $k$; that is,
+$\calF$ is the set of all graphs of order $k$.
 As Diaconis and Chatterjee note, \cite{chatterjee2021isomorphisms}, the complete
-graph $K_n$ is the `hardest' graph for a random graph to contain.  This led me
+graph $K_n$ is the `hardest' graph of order $n$ for a random graph to contain.
+This led me
 to consider two possible orderings in which $K_k$ and its complement $I_k$ come
 first.  The first of these approaches is to the sort $\calF(k)$ such that
-graphs with large automorphism appear first.  The second is to place graphs
+graphs with large automorphism groups appear first.  (Intuitively, if a graph
+has few automorphisms then we can generate many different labelled graphs
+by permuting the vertex labels.  This gives more `opportunities' for the
+graph to be an induced subgraph of $G$.)
+The second approach considered is to place graphs
 with unusually high or low edge counts, as measured by the absolute value of
 ${2|E(G)| - {|V(G)| \choose 2}}$, first.
 
-\Cref{fig:scatter} considers these two strategies, using at attempt to find
-an induced universal graph of order 8 $\calF(5)$ as an example. Each point
-represents one of the 34 graphs of order 5; only 17 points are visible as each
-graph and its complement appear in the same place on the charts.  On the vertical
+\Cref{fig:scatter} examines whether graphs that appear early in the orderings
+of $\calF$
+generated by each of these two strategies are contained in few graphs with
+a given number of vertices, as we would hope to be the case.
+For this experiment, we let $\calF = \calF(5)$, and we consider the problem
+of finding induced universal graphs of order 8.
+Each point on the plots
+represents one of the 34 graphs of order 5 (fewer than 34 points are visible
+due to exactly-overlapping points, as we would expect).  On the vertical
 axis, we have the number of graphs in $\calF(8)$ containing $G$; we would like
-graphs for which this value is as small as possible to appear early in our order.
+graphs for which this value is small to appear early in our order.
 On the horizontal axes we have each of our two measures: size of automorphism group
-and `extremeness' of edge count.  The latter measure has a strong correlation
+and `extremeness' of edge count.  The first of these measures has a strong correlation
 with the number of graphs containing $G$ as an induced subgraph, suggesting that
-it is a good proxy to use when sorting the list of graphs.
+it is a good strategy to use when sorting the list of graphs.
 
 \begin{figure}[htb]
     \centering
@@ -298,6 +420,62 @@ it is a good proxy to use when sorting the list of graphs.
     extreme the edge count of $G$ is (right plot).
     All axis scales are logarithmic.}
 \label{fig:scatter}
+\end{figure}
+
+\subsection{Testing the strategies: $\calF = \calF{5}$}
+
+We now test whether each of our ordering strategies results, as hoped,
+in a reduced number of calls to the subgraph isomorphism function
+in \Cref{alg:brute-force}.  As our first test case, we consider 
+$\FuncSty{AllInducedUniversalGraphs}(\calF(5),9)$ ---
+finding all induced universal graphs of order 9 for the family of
+all graphs of order 5.  We consider four strategies.
+The first two of these are the automorphism-count and `degree extremeness'
+measures described above.  The fourth strategy is a random order.
+Finally, we used one further strategy, which we call ``almost random''.
+Under this strategy, $I_5$ and $K_5$ are placed at the start of the list,
+and the remaining 32 graphs are in random order.  This strategy was not
+intended to be useful in practice, but to give insight into whether
+the success of the first two strategies was purely due to having
+$I_5$ and $K_5$ at the start of the list of graphs.
+For each of these strategies, we ran the program 50 times.
+
+The results are shown in \Cref{fig:second-experiment}.  Over 50 runs,
+the `automorphisms` strategy required a mean of 304,758 calls to the subgraph
+isomorphism solver, while the `degree' strategy required a very similar
+number of calls:  a mean of 304,701.  Surprisingly, the `almost random'
+strategy had the lowest average number of calls of all the strategies,
+at 304,431.  The `random' strategy fared poorly, requiring 822,649
+calls on average and a minimum of 451,287 calls in the best of the 50 runs.
+The variance in number of calls was tiny for all but the random strategy,
+with between 304,000 and 305,000 calls being required for each run.
+
+We note, first, that `degree' strategy appears to be at least as effective
+as the `automorphisms' strategy for this instance, despite the lower
+correlation observed in \Cref{fig:scatter}.  Perhaps most surprising is
+that the `almost random' strategy performed better than any of the other
+strategies.
+
+\begin{figure}[htb]
+    \centering
+
+    \includegraphics*[width=0.7\textwidth]{img/second-experiment-plot}
+
+    \caption{TODO}
+\label{fig:second-experiment}
+\end{figure}
+
+\subsection{Testing the strategies: $\calF \subset \calF{5}$}
+
+TODO abcdef
+
+\begin{figure}[htb]
+    \centering
+
+    \includegraphics*[width=0.7\textwidth]{img/second-experiment-plot-using-sample}
+
+    \caption{TODO}
+\label{fig:second-experiment-using-sample}
 \end{figure}
 
 \section{Results for \texorpdfstring{$k \leq 5$}{k<=5}}\label{sec:results5}
