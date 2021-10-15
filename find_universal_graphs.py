@@ -93,6 +93,8 @@ def start():
             print_automorphism_stats = True
         elif arg == "--random-pattern-order":
             pattern_order = "random"
+        elif arg == "--almost-random-pattern-order":
+            pattern_order = "almost-random"
         elif arg == "--degree-pattern-order":
             pattern_order = "degree"
         else:
@@ -115,17 +117,26 @@ def start():
         patterns = [G for G, _ in read_all_graphs(nP)]
         if not isinstance(patterns, list):
             patterns = [patterns]
+        if graph_type == "sample-of-graphs":
+            random.shuffle(patterns)
+            patterns = patterns[:len(patterns) // 2]
 
     if check_with_igraph:
         check_automorphism_counts(patterns)
         sys.stderr.write('Checked automorphism counts.\n')
 
-    if pattern_order == "random":
-        random.shuffle(patterns)
+    random.shuffle(patterns)
+    if pattern_order == "automorphisms":
+        patterns.sort(key=lambda G: -len(induced_subgraph_isomorphism(G, G, True)))
+    elif pattern_order == "almost-random":
+        # Move I_{nP} and K_{nP} to the start
+        patterns.sort(
+            key=lambda G: sum(sum(row) for row in G._adj_mat) == G.number_of_nodes() * (G.number_of_nodes() - 1),
+            reverse=True
+        )
+        patterns.sort(key=lambda G: sum(sum(row) for row in G._adj_mat) == 0, reverse=True)
     elif pattern_order == "degree":
         patterns.sort(key=lambda G: -abs(sum(sum(row) for row in G._adj_mat) - G.number_of_nodes() * (G.number_of_nodes() - 1) / 2))
-    else:
-        patterns.sort(key=lambda G: -len(induced_subgraph_isomorphism(G, G, True)))
 
     if print_automorphism_stats:
         print_automorphism_stats_and_exit(nT, patterns)
