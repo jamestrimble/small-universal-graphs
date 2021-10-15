@@ -101,11 +101,11 @@ def start():
             random.seed(int(arg[7:]))
         else:
             if arg_count == 0:
-                graph_type = sys.argv[1]
+                graph_type = arg
             elif arg_count == 1:
-                nP = int(sys.argv[2])
+                nP = int(arg)
             elif arg_count == 2:
-                nT = int(sys.argv[3])
+                nT = int(arg)
             else:
                 print_usage_and_exit()
             arg_count += 1
