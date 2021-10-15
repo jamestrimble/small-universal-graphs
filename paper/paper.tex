@@ -96,7 +96,8 @@ $\calF$ if and only if each element of $\calF$ is an induced subgraph of $G$.
 Graph $G$ is a \emph{minimal} induced universal graph for $\calF$ if it has as
 few vertices as possible.  The problem of finding a minimal induced universal graph
 of a family of graphs generalises the minimum common supergraph problem
-\cite{DBLP:journals/computing/BunkeJK00}.
+\cite{DBLP:journals/computing/BunkeJK00}, which applies only to families
+containing exactly two graphs.
 
 We write $\calF(k)$ to denote the family of all graphs on $k$ vertices,
 and we write $f(k)$ to denote the order (that is, the
@@ -123,7 +124,7 @@ search with the Maple programming language \cite{preen_math_se}.
 
     \subfigure[][The five induced universal graphs of order 5 for \calF(3) (that is, for the family of all 3-vertex graphs)] {
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1,2,3,4;
            3 -- 0;
@@ -134,7 +135,7 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \qquad
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1,2,3,4;
           3 -- 0;
@@ -146,7 +147,7 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \qquad
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1,2,3,4;
           3 -- 0;
@@ -158,7 +159,7 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \qquad
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1,2,3,4;
           3 -- 0;
@@ -170,7 +171,7 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \qquad
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1,2,3,4;
           3 -- 0;
@@ -190,7 +191,7 @@ search with the Maple programming language \cite{preen_math_se}.
             a graph with a single edge), an induced subgraph isomorphic to $G$ is shown in a
             single color.] {
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1[fill=uofgpumpkin],2[fill=uofgpumpkin],3[fill=uofgpumpkin],4;
            3 -- 0;
@@ -201,7 +202,7 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \qquad
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0[fill=uofgturquoise],1,2,3[fill=uofgturquoise],4[fill=uofgturquoise];
            4 -- 1;
@@ -212,7 +213,7 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \qquad
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1[fill=uofgrose],2,3[fill=uofgrose],4[fill=uofgrose];
            3 -- 0;
@@ -223,7 +224,7 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \qquad
       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \graph [nodes={draw, circle, minimum width=.52cm, inner sep=1pt}, circular placement, radius=0.82cm,
+        \graph [nodes={draw, circle, minimum width=.49cm, inner sep=1pt}, circular placement, radius=0.78cm,
                 clockwise=5] {
                     0,1[fill=uofgmocha],2[fill=uofgmocha],3,4[fill=uofgmocha];
            3 -- 0;
@@ -264,8 +265,10 @@ whether a graph $G$ is induced universal for $\calF$ by checking that
 $H$ is isomorphic to a subgraph of $G$ for each $G \in \calF$.
 
 For the collection $\calF(n)$ of candidate graphs on \lineref{TryEachG}, our
-implementation uses Brendan McKay's lists of
-graphs\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/graphs.html}}.
+implementation uses trees generated using Brendan McKay's \texttt{geng}
+program \cite{DBLP:journals/jal/McKay98}
+\footnote{The program \texttt{geng} is distributed
+with Nauty; we used version 27.r3.\url{https://pallini.di.uniroma1.it/}}.
 These are read in \texttt{graph6}
 format\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/formats.html}}
 from a text file as the program proceeds, and therefore only one candidate
@@ -295,37 +298,6 @@ an experimental comparison with other subgraph isomorphism solvers.
 
 \begin{algorithm}[h!]
 \DontPrintSemicolon
-%%% \nl $\FuncSty{Search}(\AlgVar{future},M)$ \;
-%%% \nl \Begin{
-%%% %\nl \lIf {$\AlgVar{future} = \emptyset$ \bf{and} $|M| > |\AlgVar{incumbent}|$}
-%%% \nl \lIf {$|M| > |\AlgVar{incumbent}|$}{$\AlgVar{incumbent} \gets M$} \label{StoreIncumbent}
-%%% %\nl \lIf {$\AlgVar{future} = \emptyset$}{return}
-%%% \medskip
-%%% \nl $\AlgVar{bound} \gets |M|  + \sum_{\langle \setG,\setH \rangle \in \AlgVar{future}} \min(|\setG|,|\setH|)$ \label{CalcBound} \;
-%%% \nl \lIf {$\AlgVar{bound} \leq |\AlgVar{incumbent}|$}{\KwSty{return}} \label{PruneSearch}
-%%% \medskip
-%%% \nl $\langle \setG,\setH \rangle \gets \FuncSty{SelectLabelClass}(\AlgVar{future})$ \label{SelectClass} \;
-%%% \nl $v \gets \FuncSty{SelectVertex}(\setG)$ \label{SelectVertex} \;
-%%% \nl \For {$w \in \setH$ \label{WLoop}} {
-%%% \nl    $\AlgVar{future'} \gets \emptyset$ \label{NewFuture} \;
-%%% \nl    \For {$\langle \setG',\setH'\rangle \in future$ \label{InnerLoop}}{
-%%% \nl        $\setG'' \gets \setG' \cap \N(\graphG, v) \setminus \{v\}$ \label{NewPWithEdge} \;
-%%% \nl        $\setH'' \gets \setH' \cap \N(\graphH, w) \setminus \{w\}$ \;
-%%% \nl        \If {$\setG'' \neq \emptyset$ \bf{and} $\setH'' \neq \emptyset$\label{IfNonEmpty}}{
-%%% \nl            $\AlgVar{future'} \gets \AlgVar{future'} \cup \{\langle \setG'' , \setH'' \rangle\}$ \label{AddToFutureWithEdge}}
-%%% \nl        $\setG'' \gets \setG' \cap \invN(\graphG, v) \setminus \{v\}$ \label{NewPWithoutEdge}  \;
-%%% \nl        $\setH'' \gets \setH' \cap \invN(\graphH, w) \setminus \{w\}$ \;
-%%% \nl        \If {$\setG'' \neq \emptyset$ \bf{and} $\setH'' \neq \emptyset$\label{IfNonEmpty2}}{
-%%% \nl            $\AlgVar{future'} \gets \AlgVar{future'} \cup \{\langle \setG'' , \setH'' \rangle\}$} \label{InnerLoopEnd}
-%%%        }
-%%% \nl   $\FuncSty{Search}(\AlgVar{future'},M\cup \{(v,w)\})$ \label{ExpandWithV} \;
-%%%   }
-%%% \nl $\setG' \gets \setG \setminus \{v\}$ \label{RemoveV} \;
-%%% \nl $\AlgVar{future} \gets \AlgVar{future} \setminus \{\langle \setG,\setH \rangle\}$\;
-%%% \nl \lIf {$\setG' \neq \emptyset$} {$\AlgVar{future} \gets \AlgVar{future} \cup \{\langle \setG',\setH \rangle \}$}
-%%% \nl $\FuncSty{Search}(\AlgVar{future},M)$ \label{ExpandWithoutV} \;
-%%% }
-%%% \;
 \nl $\FuncSty{IsInducedUniversal}(\calF,G)$ \label{BruteForceFun} \;
 \nl \KwData{A family of graphs $\calF$ and a graph $G$.}
 \nl \KwResult{A logical value indicating whether $G$ is induced universal for $\calF$.}
@@ -466,14 +438,36 @@ We note, first, that `degree' strategy appears to be at least as effective
 as the `automorphisms' strategy for this instance, despite the lower
 correlation observed in \Cref{fig:scatter}.  Perhaps most surprising is
 that the `almost random' strategy performed better than any of the other
-strategies.
-\Cref{tab:graphs-by-autom-count}
+strategies; our expectation had been that this simple strategy would
+give some but not all of the benefit of the first two strategies.
+We conjecture that the almost-random strategy is effective because it
+quickly checks a diverse range of graphs of graphs.  Consider, for example,
+\Cref{tab:graphs-by-autom-count}, which shows the graphs of order 5 listed
+in descending order of automorphism count.  This is the order in which they
+are checked under the automorphisms strategy (with the order within each
+row chosen randomly).  Note that the two graphs in the second row are
+similar to the graphs in the first row; the first graphs in each of the first
+two rows, for example, have a maximum common induced subgraph of size 4.
+It seems likely that if a graph contains both graphs in the first row of
+the table as induced subgraphs, then it may also contain the graphs in the
+second row. The `almost random' strategy is likely to choose graphs
+that are quite different from a clique and an independent set after the first
+two graphs, perhaps increasing the probability that one of these graphs
+will not be contained in the larger graph.
 
 \input{img/graphs5}
 
 \subsection{Testing the strategies: $\calF \subset \calF{5}$}
 
-TODO abcdef
+While the `almost random' strategy was very effective when searching
+for induced universal graphs of \emph{all} graphs of a given order,
+it seems likely that it will be less effective if $\calF$ is a strict
+subset of $\calF(k)$, and in particular if it does not include one
+or both of $I_k$ and $K_k$.  \Cref{fig:second-experiment-using-sample}
+examines this claim.  We generated 25 (TODO 50) subsets of $\calF(5)$,
+with each subset containing exactly half of the elements of $\calF(5)$.
+For each of these, we ran $\FuncSty{AllInducedUniversalGraphs}(\calF,9)$
+using each of the four strategies.  TODO say what happened
 
 \begin{figure}[htb]
     \centering
@@ -893,29 +887,134 @@ the two graphs shown. See the the proof of Proposition~\ref{f6proposition}}.
     these vertices are adjacent in $G$, we have a contradiction.
 \end{proof}
 
-To give an upper bound of 14 on $f(6)$, Figure~\ref{fig:adjmat14} shows the
-adjacency matrix of a 14-vertex graph that is induced universal for the family
-of all graphs on six vertices.  This was generated using a simple local search
-algorithm.  We begin by generating a random graph on 14 vertices as follows.
-We number the vertices from zero; the generator makes the
+To find an induced universal graph for $\calF(6)$ in order to give an upper bound
+on $f(6)$, we use the following local search
+algorithm, which is shown in \Cref{alg:heuristic}.
+The entry point to the algorithm is function $\FuncSty{FindInducedUniversalGraph}()$,
+which takes as its parameter the maximum number of attempted improvement steps to
+take before restarting from scratch.  The main search function, which is called
+until timeout, is $\FuncSty{FindInducedUniversalGraph'}()$.
+
+\begin{algorithm}[h!]
+\DontPrintSemicolon
+\nl $\FuncSty{FlipEdge}(G, v, w)$  \;
+\nl \Begin{
+\nl      \If {$G$ has edge $\{v,w\}$}{
+    \nl           $\KwSty{return}$~$(V(G), E(G) \setminus \{v, w\})$ \;
+}
+\nl \Else {
+    \nl           $\KwSty{return}$~$(V(G), E(G) \cup \{v, w\})$ \;
+}
+}
+\medskip
+\nl $\FuncSty{Score}(G)$  \;
+\nl \Begin{
+    \nl $\KwSty{return}$~$|\{H \in \calF(6) \mid H \textrm{ is an induced subgraph of } G\}|$ \;
+}
+\medskip
+    \nl $\FuncSty{FindInducedUniversalGraph'}(\AlgVar{maxIter})$  \;
+\nl \Begin{
+\nl    $G \gets (\{0, \dots, 13\}, \emptyset)$ \LeftComment{A graph on 14 vertices with no edges}\;
+\nl    Add edges to make vertices $\{0, \dots, 5\}$ of $G$ a clique \;
+\nl    Add to $G$ each possible edge marked $\boldsymbol{\cdot}$ in \Cref{fig:heuristic-regions} with probability $1/2$ \;
+    \nl    \For {$i \in \{1, \dots \AlgVar{maxIter}\}$\label{ImproveLoop}}{
+\nl      $v, w \gets$ vertices corresponding to a randomly-selected position marked $\boldsymbol{\cdot}$ in \Cref{fig:heuristic-regions} \;
+    \nl      $G' \gets \FuncSty{FlipEdge}(G, v, w)$ \label{FlipStep} \;
+    \nl      \lIf {$\FuncSty{Score}(G') = |\calF(6)|$}{$\KwSty{return}$~$G'$ \LeftComment{Success!}}
+    \nl      \lIf {$\FuncSty{Score}(G') \geq \FuncSty{Score}(G)$}{$G \gets G'$\label{ImproveLoopEnd}}
+       }
+\nl   $\KwSty{return}$~$\AlgVar{null}$ \;
+%%%\nl    \For {$G \in \calF(n)$}{
+%%%\nl      \lIf {$\FuncSty{IsInducedUniversal}(\calF,G)$}{$\calG \gets \calG \cup \{G\}$}
+%%%       }
+%%%\nl   $\KwSty{return}$~$\calG$ \;
+    }
+\medskip
+    \nl $\FuncSty{FindInducedUniversalGraph}(\AlgVar{maxIter})$  \;
+\nl \Begin{
+\nl    \While {time limit is not exceeded}{
+    \nl    $G \gets \FuncSty{FindInducedUniversalGraph'}(\AlgVar{maxIter})$ \;
+    \nl    \lIf {$G \not= \AlgVar{null}$}{$\KwSty{return}$~$G$}
+       }
+\nl   $\KwSty{return}$~$\AlgVar{null}$ \;
+%%%\nl    \For {$G \in \calF(n)$}{
+%%%\nl      \lIf {$\FuncSty{IsInducedUniversal}(\calF,G)$}{$\calG \gets \calG \cup \{G\}$}
+%%%       }
+%%%\nl   $\KwSty{return}$~$\calG$ \;
+    }
+\caption{A hill-climbing algorithm to find an induced universal graph for family $\calF(6)$}
+\label{alg:heuristic}
+\end{algorithm}
+
+The function $\FuncSty{FindInducedUniversalGraph'}()$
+begins by generating a random graph $G$ on 14 vertices as follows
+(see \Cref{fig:heuristic-regions}).
+Numbering the vertices from zero, we make the
 $k$ vertices numbered $0$ to $k-1$ a clique, and the $k$ vertices numbered $k-1$ to $2k-2$ an
-independent set.\footnote{The clique and the independent set thus have one vertex
+independent set.\footnote{The
+clique and the independent set thus have one vertex
 in common.  The proof of Proposition~\ref{f6proposition} can be modified straightforwardly
 to show that there is no 14-vertex induced universal graph for this family of graphs
 that contains a 6-vertex clique and a 6-vertex independent set as
 induced subgraphs with disjoint vertex sets.}
-Each possible edge that is not involved in either the clique
-or the independent set is added with probability $1/2$.
-We then repeatedly ``flip'' the status of a random edge from present to absent
-or vice versa, but always leave the large clique and independent set intact.
-After each flip, we count the number of 156 graphs on 6 vertices that are isomorphic
-to a subgraph of our 14-vertex graph.  If the most recent flip decreased
-this number, we revert it.  After each 1000 flips, we restart the algorithm
-with a new random graph.
+
+\begin{figure}[h!]
+    \centering
+    \footnotesize
+%    \tt
+       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \tikzstyle{every node}=[]
+          \input{img/heuristic-regions}
+      \end{tikzpicture}
+    \caption{The adjacency matrix used in our heuristic algorithm when searching
+        for an induced universal graph of order 14 for $\calF(6)$.  The blue
+        region (a 6-vertex clique) and the yellow region (a 6-vertex independent
+        set) remain unchanged as the algorithm runs.  The remaining possible edges,
+        marked $\boldsymbol{\cdot}$, are initially set to 0 or 1 at random,
+        and are flipped between 0 and 1 as the algorithm progresses.}
+\label{fig:heuristic-regions}
+\end{figure}
+
+Each possible edge that is not involved in either the clique or the independent
+set --- shown in the figure with a dot --- is added with probability $1/2$.
+The loop in \linerangeref{ImproveLoop}{ImproveLoopEnd} then carries out up to
+$\AlgVar{maxIter}$ iterations of a step that randomly modifies graph $G$,
+and accepts the modification if it causes the number of graphs in $\calF(6)$ that
+are induced subgraphs of $G$ to increase.
+The attempted-improvement step chooses a random pair of vertices $\{v, w\}$ that
+are not involved in either the clique or the independent set
+highlighted in \Cref{fig:heuristic-regions}, and
+``flips'' the status of the edge between these two vertices: the edge is added if it
+not present, and removed otherwise.
+After each flip, we count the number of graphs on 6 vertices (from a total
+of 156 graphs) that are
+isomorphic to an induced subgraph of our 14-vertex graph.  If the most recent flip
+increase this number or left it unchanged, we accept it.  After $\AlgVar{maxIter}$
+flips, we restart the algorithm with a new random graph.
+
+Our implementation has two optimisations that are not shown in \Cref{alg:heuristic}.
+First, scores are cached in a dictionary data structure, so that we can quickly look
+up the score of a graph that has already been visited. This data structure is
+cleared on return from $\FuncSty{FindInducedUniversalGraph'}$.
+(An alternative approach, which we have not implemented, would be avoid
+revisiting graphs using a tabu list \cite{DBLP:books/daglib/0093574}.)
+
+The second optimisation often avoids the need to visit every graph in $\calF(6)$
+during calls to $\FuncSty{Score}()$.  Rather than beginning our count at 0
+and incrementing it for every graph in $\calF(6)$ that is an induced subgraph
+of $G$, we begin our count at $|\calF(6)|$ and decrement it for every
+graph that is \emph{not} an induced subgraph of $G$.  This allows us to return
+early from the function with a score of $-1$ as soon as the counter variable
+falls below the score of $G$ prior to the most recent edge-flip, since any
+score below that value results in the most recent change being rejected.
+
+By running this search algorithm, we quickly found the graph of order 14 whose adjacency
+matrix is shown in \Cref{fig:adjmat14}.  This is induced universal for $\calF(6)$;
+therefore, $f(6) \leq 14$.  Combining our two bounds, we have $f(6) = 14$.
 
 \begin{figure}[htb]
 \centering
-\small
+\footnotesize
 \verb|0 1 1 1 1 1 0 1 1 0 0 0 1 0| \\
 \verb|1 0 1 1 1 1 1 1 1 1 1 0 0 1| \\
 \verb|1 1 0 1 1 1 0 1 1 0 1 0 1 0| \\
@@ -935,21 +1034,13 @@ six-vertex graphs}
 \label{fig:adjmat14}
 \end{figure}
 
-\begin{figure}[htb]
-    \centering
-      \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-        \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.1cm]
-      \end{tikzpicture}
-\label{fig:heuristic-regions}
-\end{figure}
-
 \section{Bounds on \texorpdfstring{$f(7)$}{f(7)}}\label{sec:f7}
 
 By Proposition~\ref{f6proposition}, we have $f(7) \geq 16$.  Figure~\ref{fig:adjmat18}
 shows the adjacency matrix of an 18-vertex induced universal
 graph for the family of all seven-vertex graphs. This was generated with 
 the heuristic described in Section~\ref{sec:f6}, with two modifications.
-First, 10000 rather than 1000
+First, 10,000 rather than 1000
 edge-flips were permitted before each restart, as this was found to be more effective
 in a preliminary run of the experiment.  Second, the overlapping six-vertex clique
 and independent set were replaced with a clique on seven vertices and an independent
@@ -961,7 +1052,7 @@ Thus we have $16 \leq f(7) \leq 18$.
 
 \begin{figure}[htb]
 \centering
-\small
+\footnotesize
 \verb|0 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 0 0| \\
 \verb|1 0 1 1 1 1 1 0 1 1 1 0 1 1 0 1 0 0| \\
 \verb|1 1 0 1 1 1 1 1 0 1 0 1 0 0 0 0 0 1| \\
@@ -987,9 +1078,30 @@ seven-vertex graphs}
 
 \section{Trees}\label{sec:trees}
 
+In order to generate induced universal graphs for families of
+all trees on $k$ vertices, we ran \Cref{alg:brute-force}
+using lists of trees published by Brendan
+McKay.\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/trees.html}}
+
 Table~\ref{tab:treeresults} gives the order $t(k)$ of a minimal induced universal graph for
 the family of $k$-vertex trees, and the number $T(k)$ of such graphs.  Figure~\ref{fig:trees}
 shows one of the 66 minimal induced universal graphs for the family of 6-vertex trees.
+
+\section{Verification}\label{sec:verification}
+
+To verify correctness of the results in
+\Cref{tab:graphresults} and \Cref{tab:treeresults}, we repeated every call to
+the McSplit subgraph isomorphism solver using the LAD algorithm \cite{DBLP:journals/ai/Solnon10}
+as implemented in the \texttt{igraph} library \cite{igraph}.
+
+We verified that the graphs shown as adjacency matrices in \Cref{fig:adjmat14}
+and \Cref{fig:adjmat18} are induced universal graphs for their corresponding families
+using a shell script that calls the Glasgow Subgraph Solver to check for the
+inclusion of every graph of $k$ vertices \cite{DBLP:conf/cp/McCreeshP15,DBLP:conf/gg/McCreeshP020}.
+This script shares no code with the Python program that generated the graphs.
+
+TODO: verification of small instances from the tables using Glasgow Subgraph Solver
+
 
 \section{Acknowledgements}
 
@@ -1019,7 +1131,7 @@ all $k$-vertex trees as induced subgraphs.}
 
 \begin{figure}[htb]
     \centering
-\begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+\begin{tikzpicture}[>=latex',line join=bevel,scale=.35]
   \pgfsetlinewidth{.5bp}
 %%
 \pgfsetcolor{black}
@@ -1100,7 +1212,7 @@ all $k$-vertex trees as induced subgraphs.}
 %
 \end{tikzpicture}
 
-\caption{A universal graph for the family of all
+\caption{An induced universal graph for the family of all
 trees with 6 vertices}
 \label{fig:trees}
 \end{figure}
