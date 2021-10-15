@@ -75,12 +75,11 @@ def start():
                 best = score
                 if best > overall_best:
                     overall_best = best
-            print(score, best, overall_best, " ", len(patterns))
+            sys.stderr.write("{} {} {}  {}\n".format(score, best, overall_best, len(patterns)))
             if score == len(patterns):
-                print()
                 for row in T._adj_mat:
                     print(" ".join(str(int(x)) for x in row))
-                print('success', nP, nT)
+                #print('success', nP, nT)
                 exit(0)
 #        print()
 

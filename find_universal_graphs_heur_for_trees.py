@@ -73,7 +73,7 @@ def start():
             elif score > best:
                 best = score
                 if best > overall_best:
-                    print("*", overall_best, len(patterns))
+                    sys.stderr.write("* {} {}\n".format(overall_best, len(patterns)))
                     overall_best = best
             if score == len(patterns):
 #                print()
@@ -87,15 +87,15 @@ def start():
 #                                print('GOOD')
                 for row in T._adj_mat:
                     print(" ".join(str(int(x)) for x in row))
-                print('success', nP, nT)
-                print('graph {')
-                for i in range(nT):
-                    print('  v{};'.format(i))
-                for i in range(nT):
-                    for j in range(i):
-                        if T._adj_mat[i][j]:
-                            print('  v{} -- v{};'.format(i, j))
-                print('}')
+                #### print('success', nP, nT)
+                #### print('graph {')
+                #### for i in range(nT):
+                ####     print('  v{};'.format(i))
+                #### for i in range(nT):
+                ####     for j in range(i):
+                ####         if T._adj_mat[i][j]:
+                ####             print('  v{} -- v{};'.format(i, j))
+                #### print('}')
                 exit(0)
 
 
