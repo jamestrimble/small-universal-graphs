@@ -243,20 +243,62 @@ the method could easily be applied to any family $\calF$ of graphs, and indeed
 Section~\ref{sec:trees} gives results from the application of this method
 to families of trees.)
 
-For those graphs $G$ that do not contain a copy of each element of $\calF(k)$,
-it improves the speed of our algorithm if we can iterate over
-$\calF(k)$ in an order that allows us to quickly reject $G$ by finding a graph
-that is not an induced subgraph of $G$.  The approach I used was to sort
-$\calF(k)$ in descending order of number of automorphisms.  In particular, this
-means that the clique $K_k$ and the independent set $I_k$ are the first two
-graphs tested.
-
 The full set of experiments described in this paper, run sequentially,
 took less than an hour to complete on a laptop with an Intel Core i5-6200U CPU
 and 8 GB RAM.\footnote{The code and
 results from this paper, including lists of minimal induced universal graphs
 in graph6 format, are available from
 \url{https://github.com/jamestrimble/small-universal-graphs}}
+
+\section{Iteration order for $\calF$}\label{sec:iteration-order}
+
+When deciding whether a graph $G$ contains any element of $\calF(k)$, are
+some iteration orders of $\calF(k)$ better than others?
+For a graph $G$ that contains a copy of each element of $\calF(k)$, the iteration
+order is of no importance; we much check every element of $\calF(k)$.
+For graphs $G$ that do \emph{not} contain a copy of each element of $\calF(k)$,
+however, we would like to find an order of $\calF(k)$ such that graphs
+that are likely to fail the subgraph isomorphism test are checked early.
+
+As Diaconis and Chatterjee note, \cite{chatterjee2021isomorphisms}, the complete
+graph $K_n$ is the `hardest' graph for a random graph to contain.  This led me
+to consider two possible orderings in which $K_k$ and its complement $I_k$ come
+first.  The first of these approaches is to the sort $\calF(k)$ such that
+graphs with large automorphism appear first.  The second is to place graphs
+with unusually high or low edge counts, as measured by the absolute value of
+${2|E(G)| - {|V(G)| \choose 2}}$, first.
+
+\Cref{fig:scatter} considers these two strategies, using at attempt to find
+an induced universal graph of order 8 $\calF(5)$ as an example. Each point
+represents one of the 34 graphs of order 5; only 17 points are visible as each
+graph and its complement appear in the same place on the charts.  On the vertical
+axis, we have the number of graphs in $\calF(8)$ containing $G$; we would like
+graphs for which this value is as small as possible to appear early in our order.
+On the horizontal axes we have each of our two measures: size of automorphism group
+and `extremeness' of edge count.  The latter measure has a strong correlation
+with the number of graphs containing $G$ as an induced subgraph, suggesting that
+it is a good proxy to use when sorting the list of graphs.
+
+\begin{figure}[htb]
+    \centering
+
+%    \subfigure[][TODO caption] {
+      \includegraphics*{img/automorphisms-scatter.pdf}
+%      \label{fig:scatter-a}
+%    }
+     \qquad
+%    \subfigure[][TODO caption] {
+      \includegraphics*{img/deg-scatter.pdf}
+%      \label{fig:scatter-b}
+%    }
+    \caption{For each graph $G \in \calF(5)$, we plot on the vertical axis
+    the number of graphs in $\calF(8)$ that contain $G$ as an induced subgraph.
+    This value has a strong negative correlation with the size of the automorphism
+    group of $G$ (left plot), but a weaker correlation with a measure of how
+    extreme the edge count of $G$ is (right plot).
+    All axis scales are logarithmic.}
+\label{fig:scatter}
+\end{figure}
 
 \section{Results for \texorpdfstring{$k \leq 5$}{k<=5}}\label{sec:results5}
 
