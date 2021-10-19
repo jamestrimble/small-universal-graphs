@@ -104,7 +104,8 @@ and we write $f(k)$ to denote the order (that is, the
 number of vertices) of a minimal induced universal graph for $\calF(k)$.
 We write $F(k)$ to denote the number of non-isomorphic graphs of order $f(k)$
 that are induced universal for $f(k)$.
-To give an example, we have $f(3)=5$ and $F(3)=5$. All five of the minimal induced universal graphs
+To give an example, we have $f(3)=5$ and $F(3)=5$; all five of the minimal
+induced universal graphs
 for $\calF(3)$ are shown in \Cref{fig:univ3a}. \Cref{fig:univ3b} shows the four
 graphs in $\calF(3)$ as induced subgraphs of a single induced universal graph.
 
@@ -235,16 +236,25 @@ search with the Maple programming language \cite{preen_math_se}.
       \end{tikzpicture}
       \label{fig:univ3b}
     }
-\caption{Induced universal graphs for the family of all graphs on 3 vertices}
-\label{fig:graphs}
+\caption{Minimal induced universal graphs for the family of all graphs on 3 vertices}
+\label{fig:univ3}
 \end{figure}
 
 This paper uses a brute-force approach similar to that of Preen to find minimal
-induced universal graphs for families of small \emph{general} graphs.
-Section~\ref{sec:method} describes our computer search method, including an
-optimisation to reduce run times.  Sections~\ref{sec:results5} presents exact
-values of $f(k)$ for $k \leq 5$ along with
-the corresponding counts of minimal induced universal subgraphs.
+induced universal graphs for families of small graphs.  Our contributions
+are (1) an ordering strategy to reduce the number of subgraph isomorphism
+calls required by the brute force algorithm; (2) exact values for $f(k)$ $(4 \leq k \leq 6)$
+and $F(k)$ $(1 \leq k \leq 5)$; (3) an upper bound of 18 for $f(7)$; (4) a hill-climbing
+search algorithm to find small (but not necessarily optimal) induced universal graphs
+(5) exact results for families of small trees.
+
+The sequel is structured as follows.
+Section~\ref{sec:method} describes the basic brute force method.
+Section~\ref{sec:iteration-order} compares four methods for sorting
+the graphs in $\calF$, and compares their effect on the number of subgraph
+isomorphism calls made by the brute-force algorithm.
+Sections~\ref{sec:results5} presents exact
+values of $f(k)$ and $F(k)$ for $k \leq 5$.
 Section~\ref{sec:f6} gives the value of $f(6)$ and and
 Section~\ref{sec:f7} gives bounds on $f(7)$; in each of these sections, the lower
 bound is proven and a graph obtained by heuristic search demonstrating the
@@ -254,18 +264,20 @@ families of trees.
 \section{Generating all induced universal graphs}\label{sec:method}
 
 Given $\calF$ and $n$,
-we use the brute-force approach described by Preen \cite{preen_math_se} and shown
-in \Cref{alg:brute-force} to find the set of
+we use the brute-force approach
+shown in \Cref{alg:brute-force} --- which is essentially the same as the method
+described by Preen \cite{preen_math_se} ---
+to find the set of
 $n$-vertex graphs that are induced universal for the family $\calF$.
 The function $\FuncSty{AllInducedUniversalGraphs}()$ is the entry point.
 \Lineref{TryEachG} tests in turn each candidate graph $G$ from the family
 of $n$-vertex graphs, and adds to the collection $\calG$ those that are induced universal
 for $\calF$.  The function $\FuncSty{IsInducedUniversal}()$ tests
-whether a graph $G$ is induced universal for $\calF$ by checking that
-$H$ is isomorphic to a subgraph of $G$ for each $G \in \calF$.
+whether a graph $G$ is induced universal for $\calF$ by checking for
+each $H \in \calF$ that $H$ is isomorphic to a subgraph of $G$.
 
 For the collection $\calF(n)$ of candidate graphs on \lineref{TryEachG}, our
-implementation uses trees generated using Brendan McKay's \texttt{geng}
+implementation uses graphs generated using Brendan McKay's \texttt{geng}
 program \cite{DBLP:journals/jal/McKay98}
 \footnote{The program \texttt{geng} is distributed
 with Nauty; we used version 27.r3.\url{https://pallini.di.uniroma1.it/}}.
@@ -274,20 +286,24 @@ format\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/formats.html}}
 from a text file as the program proceeds, and therefore only one candidate
 graph at a time needs to be stored in memory.
 
-For the call $\FuncSty{InducedSubIso}()$ to an algorithm for the induced
-subgraph isomorphism decision problem on line \lineref{CallSubIso},
-our program uses a Python implementation of the McSplit
+Our implementation is written purely in Python and run using the CPython
+interpreter.
+On line \lineref{CallSubIso}, the function $\FuncSty{InducedSubIso}()$
+calls an algorithm for the induced
+subgraph isomorphism decision problem; for this,
+our program uses an implementation by the author of the McSplit
 algorithm \cite{DBLP:conf/ijcai/McCreeshPT17}.
 McSplit was designed for
 the more general maximum common induced subgraph problem,
 but it can be used for induced subgraph isomorphism with a simple
 modification: we backtrack when the calculated upper bound
-on the order of a common subgraph is less the order of graph $H$.
+on the order of a common subgraph is less the order of either
+of the two input graphs.
 This method for solving
 the subgraph isomorphism problem is very fast if both input graphs
 are small, as the graphs considered in this paper are.
 While McSplit is suitable for our purposes in this paper,
-we do not claim that it is the the fastest induced subgraph isomorphism
+we do not claim that it is the fastest induced subgraph isomorphism
 solver for very small graphs; it would be useful future work to perform
 an experimental comparison with other subgraph isomorphism solvers.
 %%% (Although
@@ -298,7 +314,7 @@ an experimental comparison with other subgraph isomorphism solvers.
 
 \begin{algorithm}[h!]
 \DontPrintSemicolon
-\nl $\FuncSty{IsInducedUniversal}(\calF,G)$ \label{BruteForceFun} \;
+\nl $\FuncSty{IsInducedUniversal}(\calF,G)$ \;
 \nl \KwData{A family of graphs $\calF$ and a graph $G$.}
 \nl \KwResult{A logical value indicating whether $G$ is induced universal for $\calF$.}
 \nl \Begin{
@@ -324,7 +340,7 @@ an experimental comparison with other subgraph isomorphism solvers.
 \end{algorithm}
 
 The full set of experiments described in this paper, run sequentially,
-took less than an hour to complete on a laptop with an Intel Core i5-6200U CPU
+took less than a day to complete on a laptop with an Intel Core i5-6200U CPU
 and 8 GB RAM.\footnote{The code and
 results from this paper, including lists of minimal induced universal graphs
 in graph6 format, are available from
@@ -335,19 +351,21 @@ in graph6 format, are available from
 When deciding on \lineref{HLoop} of the algorithm whether a graph $G$ contains
 every element of $\calF$ as an induced subgraph, are some iteration orders of
 $\calF$ better than others?  For a graph $G$ that contains a copy of each
-element of $\calF$, the iteration order is of no importance; we much check
-every element of $\calF$ before returning $\AlgVar{true}$.  For a graph $G$ that
+element of $\calF$, the iteration order is of no importance;
+every element of $\calF$ must be checked before $\AlgVar{true}$ is returned.
+For a graph $G$ that
 does \emph{not} contain a copy of each element of $\calF$, however, we would like
 to iterate over $\calF$ in an order such that graphs that are likely to fail the
 subgraph isomorphism test are checked early; that way, we can quickly return
-$\AlgVar{false}$.
+$\AlgVar{false}$ and avoid unnecessary calls to the subgraph isomorphism algorithm.
 
-We begin by considering the case where $\calF = \calF(k)$ for some $k$; that is,
+We begin by considering the case where our family of graphs $\calF$
+is $\calF(k)$ for some $k$; that is,
 $\calF$ is the set of all graphs of order $k$.
 As Diaconis and Chatterjee note, \cite{chatterjee2021isomorphisms}, the complete
 graph $K_n$ is the `hardest' graph of order $n$ for a random graph to contain.
 This led me
-to consider two possible orderings in which $K_k$ and its complement $I_k$ come
+to consider two orderings in which $K_k$ and its complement $I_k$ come
 first.  The first of these approaches is to the sort $\calF(k)$ such that
 graphs with large automorphism groups appear first.  (Intuitively, if a graph
 has few automorphisms then we can generate many different labelled graphs
@@ -369,9 +387,10 @@ due to exactly-overlapping points, as we would expect).  On the vertical
 axis, we have the number of graphs in $\calF(8)$ containing $G$; we would like
 graphs for which this value is small to appear early in our order.
 On the horizontal axes we have each of our two measures: size of automorphism group
-and `extremeness' of edge count.  The first of these measures has a strong correlation
+in the first plot and `extremeness' of edge count in the second plot.
+As we can see from the first plot, the automorphism measure has a strong correlation
 with the number of graphs containing $G$ as an induced subgraph, suggesting that
-it is a good strategy to use when sorting the list of graphs.
+sorting by this measure could be a good strategy.
 
 \begin{figure}[htb]
     \centering
@@ -401,47 +420,66 @@ in a reduced number of calls to the subgraph isomorphism function
 in \Cref{alg:brute-force}.  As our first test case, we consider 
 $\FuncSty{AllInducedUniversalGraphs}(\calF(5),9)$ ---
 finding all induced universal graphs of order 9 for the family of
-all graphs of order 5.  We consider four strategies.
-The first two of these are the automorphism-count and `degree extremeness'
+all graphs of order 5.  We consider four strategies:
+
+The first two of these are the automorphism-count and `edge-count extremeness'
 measures described above.  The fourth strategy is a random order.
 Finally, we used one further strategy, which we call ``almost random''.
 Under this strategy, $I_5$ and $K_5$ are placed at the start of the list,
 and the remaining 32 graphs are in random order.  This strategy was not
 intended to be useful in practice, but to give insight into whether
 the success of the first two strategies was purely due to having
-$I_5$ and $K_5$ at the start of the list of graphs.
+$I_5$ and $K_5$ at the start of the list of graphs. \Cref{tab:ordering-strategies}
+summarises these ordering strategies.
+
+\begin{table}[h!]
+\centering
+ \begin{tabular}{p{0.25\linewidth} p{0.55\linewidth}}
+ \toprule
+    Name & Description of strategy \\ [0.5ex]
+ \midrule
+    Automorphisms & Sort by size of the automorphism group \\
+    Edges & Sort by number of edges \\
+    Almost-random & Shuffle the list of graphs in $\calF$, then move $K_k$ and $I_k$ to the start (in random order) \\
+    Random & Shuffle the list of graphs in $\calF$ \\
+ \bottomrule
+\end{tabular}
+\caption{Ordering strategies tested for the brute-force algorithm}
+\label{tab:ordering-strategies}
+\end{table}
+
 For each of these strategies, we ran the program 50 times.
 
 The results are shown in \Cref{fig:second-experiment}.  Over 50 runs,
-the `automorphisms` strategy required a mean of 304,758 calls to the subgraph
-isomorphism solver, while the `degree' strategy required a very similar
-number of calls:  a mean of 304,701.  Surprisingly, the `almost random'
+the automorphisms strategy required a mean of 304,746 calls to the subgraph
+isomorphism solver, while the edges strategy required marginally fewer
+calls:  a mean of 304,701.  Surprisingly, the almost-random
 strategy had the lowest average number of calls of all the strategies,
-at 304,431.  The `random' strategy fared poorly, requiring 822,649
-calls on average and a minimum of 451,287 calls in the best of the 50 runs.
-The variance in number of calls was tiny for all but the random strategy,
+at 304,387.  The random strategy fared poorly, requiring over 800,000
+calls on average.
+The variance in number of calls was small for all but the random strategy,
 with between 304,000 and 305,000 calls being required for each run.
 
-\begin{figure}[htb]
+\begin{figure}[h!]
     \centering
 
     \includegraphics*[width=0.7\textwidth]{img/second-experiment-plot}
 
     \caption{Using each of our four order strategies, we ran
-        $\FuncSty{AllInducedUniversalGraphs}(\calF(5),9)$ 50 times. The figure
+        $\FuncSty{AllInducedUniversalGraphs}(\calF(5),9)$ 50 times. The plot
         shows the number calls to the subgraph isomorphism algorithm, in thousands.
-        Horizontal lines show mean number of calls.}
+        Horizontal lines show average (mean) number of calls.}
 \label{fig:second-experiment}
 \end{figure}
 
-We note, first, that `degree' strategy appears to be at least as effective
-as the `automorphisms' strategy for this instance, despite the lower
+We note, first, that edges strategy appears to be at least as effective
+as the automorphisms strategy for this instance, despite the lower
 correlation observed in \Cref{fig:scatter}.  Perhaps most surprising is
-that the `almost random' strategy performed better than any of the other
+that the almost-random strategy performed better than either of these two
 strategies; our expectation had been that this simple strategy would
 give some but not all of the benefit of the first two strategies.
 We conjecture that the almost-random strategy is effective because it
-quickly checks a diverse range of graphs of graphs.  Consider, for example,
+quickly checks a diverse range of graphs.  Consider, for example,
 \Cref{tab:graphs-by-autom-count}, which shows the graphs of order 5 listed
 in descending order of automorphism count.  This is the order in which they
 are checked under the automorphisms strategy (with the order within each
@@ -450,24 +488,37 @@ similar to the graphs in the first row; the first graphs in each of the first
 two rows, for example, have a maximum common induced subgraph of size 4.
 It seems likely that if a graph contains both graphs in the first row of
 the table as induced subgraphs, then it may also contain the graphs in the
-second row. The `almost random' strategy is likely to choose graphs
+second row. The almost-random strategy is likely to choose graphs
 that are quite different from a clique and an independent set after the first
 two graphs, perhaps increasing the probability that one of these graphs
 will not be contained in the larger graph.
 
 \input{img/graphs5}
 
-\subsection{Testing the strategies: $\calF \subset \calF{5}$}
+\subsection{Testing the strategies: $\calF \subset \calF(5)$}
 
-While the `almost random' strategy was very effective when searching
+While the almost-random strategy was very effective when searching
 for induced universal graphs of \emph{all} graphs of a given order,
-it seems likely that it will be less effective if $\calF$ is a strict
-subset of $\calF(k)$, and in particular if it does not include one
-or both of $I_k$ and $K_k$.  \Cref{fig:second-experiment-using-sample}
-examines this claim.  We generated 25 (TODO 50) subsets of $\calF(5)$,
+it is plausible that it will be less effective if $\calF$ is a strict
+subset of $\calF(k)$, and in particular if it includes
+neither $I_k$ nor $K_k$.  \Cref{fig:second-experiment-using-sample}
+examines this claim.  We generated 50 subsets of $\calF(5)$,
 with each subset containing exactly half of the elements of $\calF(5)$.
 For each of these, we ran $\FuncSty{AllInducedUniversalGraphs}(\calF,9)$
-using each of the four strategies.  TODO say what happened
+using each of the four strategies.  The `automorphisms' strategy
+was the best overall in this case, requiring on average $8\%$, $27\%$, and $52\%$
+fewer calls to the subgraph isomorphism function than the edges, almost-random,
+and random strategies respectively.
+
+To help us understand why the almost-random
+strategy performs poorly for these instances, we connect the four solver runs on
+each instance together on the plot with blue lines.  The almost-random
+strategy, on the instances where it performs poorly, requires
+exactly the same number of subgraph isomorphism calls as the random strategy.
+These are the instances in which $\calF$ contains neither $K_5$ nor $I_5$;
+thus, the almost-random and random strategies are equivalent.  Notably,
+for these instances it is also the case that the automorphisms strategy
+tends to outperform the edges strategy.
 
 \begin{figure}[htb]
     \centering
@@ -476,11 +527,40 @@ using each of the four strategies.  TODO say what happened
 
     \caption{Using each of our four order strategies, we ran
         $\FuncSty{AllInducedUniversalGraphs}(\calF,9)$ 50 times, where
-        $\calF$ is a random subset of $\calF(5)$ containing 17 graphs. The figure
+        $\calF$ is a random subset of $\calF(5)$ containing 17 graphs. This
+        parallel coordinates plot
         shows the number calls to the subgraph isomorphism algorithm, in thousands.
-        Horizontal lines show mean number of calls.}
+        Horizontal black lines show average (mean) number of calls.  The four runs for
+        each instance are connected by blue lines.}
 \label{fig:second-experiment-using-sample}
 \end{figure}
+
+\subsection{Testing the strategies: a family of trees}
+
+As a final test case, we let $\calF$ be the family of all trees on 6 vertices,
+and searched for all graphs of order 8 that are induced universal for $\calF$.
+\Cref{fig:second-experiment-using-trees} shows the results. The edges, almost-random,
+and random strategies had identical results, since all members of $\calF$ have five
+edges and the family contains neither $K_6$ nor $I_6$.  The automorphisms strategy
+requires fewer subgraph isomorphism calls on average than the other three strategies,
+although on seven of the 50 instances it does require marginally more calls than
+the other strategies.
+
+\begin{figure}[htb]
+    \centering
+
+    \includegraphics*[width=0.7\textwidth]{img/second-experiment-plot-using-trees}
+
+    \caption{Using each of our four order strategies, we ran
+        $\FuncSty{AllInducedUniversalGraphs}(\calF,8)$ 50 times, where
+        $\calF$ is the set of all trees of order 6. The plot
+        shows the number calls to the subgraph isomorphism algorithm, in thousands.
+        Horizontal black lines show average (mean) number of calls.}
+\label{fig:second-experiment-using-trees}
+\end{figure}
+
+The `automorphisms' strategy performs consistently well across our three test
+cases; therefore, we use this strategy for the remainder of the paper.
 
 \section{Results for \texorpdfstring{$k \leq 5$}{k<=5}}\label{sec:results5}
 
