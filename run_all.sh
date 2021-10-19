@@ -7,6 +7,6 @@ mkdir results
 
 cat exhaustive_tests.txt | while read type p t; do
     echo $type $p $t
-    pypy3 find_universal_graphs.py $type $p $t > results/$type-$p-$t.txt
+    pypy3 find_universal_graphs.py $type $p $t --check > results/$type-$p-$t.txt
     pypy3 graph6_to_dot.py results/$type-$p-$t.txt dot-graphs/$type-$p-$t-{}.dot
 done
