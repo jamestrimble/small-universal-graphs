@@ -14,7 +14,7 @@ set ytics nomirror
 set tics front
 #set size square
 set xrange [.5:4.5]
-set xtics ("Automorphisms" 1, "Degree" 2, "Almost random" 3, "Random" 4)
+set xtics ("Automorphisms" 1, "Edges" 2, "Almost random" 3, "Random" 4)
 set yrange [0:]
 #set ytics 0,.5,2.5
 #set format x '$10^{%T}$'
