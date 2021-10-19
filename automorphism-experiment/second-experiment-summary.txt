@@ -1,0 +1,57 @@
+------------------------------
+Type: graph
+Results for automorphisms pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+304600        304934        304745.66
+
+Results for degree pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+304600        304885        304700.8
+
+Results for random pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+327037        1772728       826833.56
+
+Results for almost-random pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+304213        304927        304387.28
+
+
+------------------------------
+Type: sample-of-graphs
+Results for automorphisms pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+304438        763158        366212.74
+
+Results for degree pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+304213        907623        398580.14
+
+Results for random pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+324164        1442941       756894.34
+
+Results for almost-random pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+304213        1442941       500018.88
+
+
+------------------------------
+Type: tree
+Results for automorphisms pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+12591         12592         12591.24
+
+Results for degree pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+12562         15238         13765.88
+
+Results for random pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+12562         15238         13765.88
+
+Results for almost-random pattern order:
+min(field-1)  max(field-1)  mean(field-1)
+12562         15238         13765.88
+
+

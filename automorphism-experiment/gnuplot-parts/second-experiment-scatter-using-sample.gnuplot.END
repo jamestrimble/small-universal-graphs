@@ -1,0 +1,2 @@
+    "results-of-second-experiment_sample-of-graphs.tsv" u 5:($3/1000) pt 7 lc rgb "#991f77b4" ps .3 notitle, \
+    "results-of-second-experiment-summary_sample-of-graphs.tsv" using ($1-.2):($2/1000):(.4):(0) with vectors nohead lw 1 lc rgb "#000000" notitle
