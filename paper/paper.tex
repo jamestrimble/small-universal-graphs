@@ -103,7 +103,7 @@ We write $\calF(k)$ to denote the family of all graphs on $k$ vertices,
 and we write $f(k)$ to denote the order (that is, the
 number of vertices) of a minimal induced universal graph for $\calF(k)$.
 We write $F(k)$ to denote the number of non-isomorphic graphs of order $f(k)$
-that are induced universal for $f(k)$.
+that are induced universal for $\calF(k)$.
 To give an example, we have $f(3)=5$ and $F(3)=5$; all five of the minimal
 induced universal graphs
 for $\calF(3)$ are shown in \Cref{fig:univ3a}. \Cref{fig:univ3b} shows the four
@@ -243,7 +243,7 @@ search with the Maple programming language \cite{preen_math_se}.
 This paper uses a brute-force approach similar to that of Preen to find minimal
 induced universal graphs for families of small graphs.  Our contributions
 are (1) an ordering strategy to reduce the number of subgraph isomorphism
-calls required by the brute force algorithm; (2) exact values for $f(k)$ $(4 \leq k \leq 6)$
+calls required by the brute force algorithm; (2) exact values for $f(k)$ $(5 \leq k \leq 6)$
 and $F(k)$ $(1 \leq k \leq 5)$; (3) an upper bound of 18 for $f(7)$; (4) a hill-climbing
 search algorithm to find small (but not necessarily optimal) induced universal graphs
 (5) exact results for families of small trees.
@@ -564,9 +564,12 @@ cases; therefore, we use this strategy for the remainder of the paper.
 
 \section{Results for \texorpdfstring{$k \leq 5$}{k<=5}}\label{sec:results5}
 
-Table~\ref{tab:graphresults} shows, for $0 \leq k \leq 5$, the value of $f(k)$.
-The table also shows $F(k)$, the number of minimal induced universal
-graphs for the family of all $k$-vertex graphs.  To my knowledge, the value of
+Recall that $f(k)$ is the order of a minimal induced universal graph for
+$\calF(k)$, and $F(k)$ is the number of non-isomorphic graphs of that order
+for $\calF(k)$ that are induced universal for $\calF(k)$.  This section
+presents values of $f(k)$ and $F(k)$ for $0 \leq k \leq 5$, computed
+using \Cref{alg:brute-force}. The results are shown in 
+Table~\ref{tab:graphresults}.  To my knowledge, the value of
 $f(5)$ and the values of $F(k)$ have not been published previously.
 
 The values $f(1)$, $f(2)$ and $f(3)$ are equal to to the simple lower bound $2k
@@ -604,58 +607,12 @@ all $k$-vertex graphs as induced subgraphs.}
 %
 
 Figure~\ref{fig:graphs} shows examples of minimal induced universal graphs
-for the families of all graphs with three, four and five vertices
+for the families of all graphs with four and five vertices
 respectively.
 
 \begin{figure}[htb]
     \centering
 
-\begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
-  \pgfsetlinewidth{.5bp}
-%%
-\pgfsetcolor{black}
-  % Edge: 3 -- 0
-  \draw [] (51.166bp,32.248bp) .. controls (44.492bp,40.742bp) and (36.044bp,51.496bp)  .. (29.344bp,60.024bp);
-  % Edge: 4 -- 0
-  \draw [] (71.737bp,82.653bp) .. controls (60.758bp,80.98bp) and (46.814bp,78.855bp)  .. (35.882bp,77.189bp);
-  % Edge: 4 -- 1
-  \draw [] (104.4bp,96.268bp) .. controls (113.37bp,102.97bp) and (124.85bp,111.55bp)  .. (133.86bp,118.28bp);
-  % Edge: 4 -- 3
-  \draw [] (82.931bp,68.405bp) .. controls (78.728bp,58.107bp) and (73.39bp,45.028bp)  .. (69.205bp,34.773bp);
-  % Node: 0
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (18.0bp,74.46bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 1
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (148.63bp,129.31bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 2
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (148.0bp,57.0bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 3
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (62.36bp,18.0bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 4
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (89.87bp,85.42bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-%
-\end{tikzpicture}
-\qquad
-\qquad
 \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
   \pgfsetlinewidth{.5bp}
 %%
@@ -842,8 +799,7 @@ respectively.
 \end{scope}
 %
 \end{tikzpicture}
-\caption{Minimal induced universal graphs for the families of all
-graphs with 3, 4, and 5 vertices}
+\caption{Examples of minimal induced universal graphs for $\calF(4)$ and $\calF(5)$}
 \label{fig:graphs}
 \end{figure}
 
@@ -860,7 +816,7 @@ this means that $f(6) \geq 14$.
 
     Suppose that $G$ is an induced universal graph for the family of all graphs
     on $k$ vertices, and that $G$ has no more than $2k + 1$ vertices.  Graph
-    $G$ must have $K_k$ and $I_k$ as induced sugraphs.  This clique and
+    $G$ must have $K_k$ and $I_k$ as induced sugraphs.  Clearly, this clique and
     independent set may overlap by no more than one vertex, so their union must
     contain at least $2k - 1$ vertices.  Therefore it is possible to partition
     the vertices of $G$ into three sets: a clique $S_1$, an independent set
@@ -1061,9 +1017,9 @@ The loop in \linerangeref{ImproveLoop}{ImproveLoopEnd} then carries out up to
 $\AlgVar{maxIter}$ iterations of a step that randomly modifies graph $G$,
 and accepts the modification if it causes the number of graphs in $\calF(6)$ that
 are induced subgraphs of $G$ to increase.
-The attempted-improvement step chooses a random pair of vertices $\{v, w\}$ that
-are not involved in either the clique or the independent set
-highlighted in \Cref{fig:heuristic-regions}, and
+The attempted-improvement step chooses a random pair of vertices $\{v, w\}$,
+both of which are not in the same coloured square of 
+in \Cref{fig:heuristic-regions}, and
 ``flips'' the status of the edge between these two vertices: the edge is added if it
 not present, and removed otherwise.
 After each flip, we count the number of graphs on 6 vertices (from a total
@@ -1076,8 +1032,9 @@ Our implementation has two optimisations that are not shown in \Cref{alg:heurist
 First, scores are cached in a dictionary data structure, so that we can quickly look
 up the score of a graph that has already been visited. This data structure is
 cleared on return from $\FuncSty{FindInducedUniversalGraph'}$.
-(An alternative approach, which we have not implemented, would be avoid
-revisiting graphs using a tabu list \cite{DBLP:books/daglib/0093574}.)
+(An alternative approach, which we have not implemented, would be to
+use a tabu list \cite{DBLP:books/daglib/0093574} to avoid revisiting graphs
+that have been visited recently.)
 
 The second optimisation often avoids the need to visit every graph in $\calF(6)$
 during calls to $\FuncSty{Score}()$.  Rather than beginning our count at 0
@@ -1176,12 +1133,14 @@ as implemented in the \texttt{igraph} library \cite{igraph}.
 
 We verified that the graphs shown as adjacency matrices in \Cref{fig:adjmat14}
 and \Cref{fig:adjmat18} are induced universal graphs for their corresponding families
-using a shell script that calls the Glasgow Subgraph Solver to check for the
-inclusion of every graph of $k$ vertices \cite{DBLP:conf/cp/McCreeshP15,DBLP:conf/gg/McCreeshP020}.
+using a shell script that calls the Glasgow Subgraph Solver \cite{DBLP:conf/cp/McCreeshP15,DBLP:conf/gg/McCreeshP020} to check for the
+inclusion of every graph of $k$ vertices.
 This script shares no code with the Python program that generated the graphs.
 
-TODO: verification of small instances from the tables using Glasgow Subgraph Solver
-
+Finally, we verified all but the final row in each of \Cref{tab:graphresults}
+and \Cref{tab:treeresults} using a second shell script that calls the Glasgow
+Subgraph Solver.  Again, this shares no code with the program used to generate
+the results in the tables.
 
 \section{Acknowledgements}
 
@@ -1211,7 +1170,7 @@ all $k$-vertex trees as induced subgraphs.}
 
 \begin{figure}[htb]
     \centering
-\begin{tikzpicture}[>=latex',line join=bevel,scale=.35]
+\begin{tikzpicture}[>=latex',line join=bevel,scale=.28]
   \pgfsetlinewidth{.5bp}
 %%
 \pgfsetcolor{black}
