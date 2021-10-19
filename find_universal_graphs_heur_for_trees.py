@@ -73,8 +73,8 @@ def start():
             elif score > best:
                 best = score
                 if best > overall_best:
-                    sys.stderr.write("* {} {}\n".format(overall_best, len(patterns)))
                     overall_best = best
+                    sys.stderr.write("* {} {}\n".format(overall_best, len(patterns)))
             if score == len(patterns):
 #                print()
 #                for i in range(nT):

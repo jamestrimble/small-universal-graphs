@@ -75,7 +75,8 @@ def start():
                 best = score
                 if best > overall_best:
                     overall_best = best
-            sys.stderr.write("{} {} {}  {}\n".format(score, best, overall_best, len(patterns)))
+                    sys.stderr.write("* {} {}\n".format(overall_best, len(patterns)))
+            #sys.stderr.write("{} {} {}  {}\n".format(score, best, overall_best, len(patterns)))
             if score == len(patterns):
                 for row in T._adj_mat:
                     print(" ".join(str(int(x)) for x in row))
