@@ -438,9 +438,10 @@ summarises these ordering strategies.
  \toprule
     Name & Description of strategy \\ [0.5ex]
  \midrule
-    Automorphisms & Sort by size of the automorphism group \\
-    Edges & Sort by number of edges \\
-    Almost-random & Shuffle the list of graphs in $\calF$, then move $K_k$ and $I_k$ to the start (in random order) \\
+    Automorphisms & Sort in descending order of automorphism group size \\
+    Edges & Sort in descending order of $\big|{2|E(G)| - {|V(G)| \choose 2}}\big|$ 
+            (thus, give priority to graphs that are very sparse or very dense)\\
+    Almost-random & Shuffle the list of graphs in $\calF$, then move $K_k$ and $I_k$ to the start if they are present \\
     Random & Shuffle the list of graphs in $\calF$ \\
  \bottomrule
 \end{tabular}
