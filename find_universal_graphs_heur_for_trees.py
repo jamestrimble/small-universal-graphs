@@ -23,10 +23,23 @@ def read_all_graphs(n):
 
     
 def random_graph(n, nP):
+    # This function is not used
     G = Graph(n)
     for v in range(n):
         for w in range(v):
             if random.random() < .1:
+                G.add_edge(v, w)
+    return G
+
+    
+def initial_graph(n, nP):
+    G = Graph(n)
+    for v in range(n):
+        for w in range(v):
+            if v < nP and w < nP:
+                if w == 0:
+                    G.add_edge(v, w)
+            elif random.random() < .1:
                 G.add_edge(v, w)
     return G
 
@@ -56,7 +69,7 @@ def start():
     overall_best = -1
     while True:
         score_cache = {}
-        T = random_graph(nT, nP)
+        T = initial_graph(nT, nP)
         best = -1
         for _ in range(iters_per_T):
             v, w = choose_edge_to_change(T, nP)
@@ -118,8 +131,11 @@ def choose_edge_to_change(G, nP):
     while True:
         v = random.randrange(G.number_of_nodes())
         w = random.randrange(G.number_of_nodes())
-        if v != w:
-            return v, w
+        if v == w:
+            continue
+        if v < nP and w < nP:
+            continue
+        return v, w
 
 
 if __name__ == "__main__":
