@@ -28,10 +28,10 @@ for i in range(n):
             adjmat[i][j] = "$\\boldsymbol{\\cdot}$"
             adjmat[j][i] = "$\\boldsymbol{\\cdot}$"
 
-print("\draw[uofgcobalt,fill=uofgcobalt,fill opacity=0.15, thick] (-.4,-6.4) rectangle (6.4,.4);")
-print("\draw[uofgpumpkin,fill=uofgpumpkin,fill opacity=0.15, thick] (6.6,-6.4) rectangle (10.4,-.4);")
-#print("\draw[uofgpumpkin,fill=uofgpumpkin,fill opacity=0.15, thick] (.4,-10.4) rectangle (6.4,-6.6);")
-print("\draw[uofgslate,fill=uofgslate,fill opacity=0.15, thick] (6.6,-10.4) rectangle (10.4,-6.6);")
+print("\draw[uofgcobalt,fill=uofgcobalt,fill opacity=0.15, thick] (-.45,-6.45) rectangle (6.45,.45);")
+print("\draw[uofgpumpkin,fill=uofgpumpkin,fill opacity=0.15, thick] (6.55,-6.45) rectangle (10.45,-.45);")
+#print("\draw[uofgpumpkin,fill=uofgpumpkin,fill opacity=0.15, thick] (.45,-10.45) rectangle (6.45,-6.55);")
+print("\draw[uofgslate,fill=uofgslate,fill opacity=0.15, thick] (6.55,-10.45) rectangle (10.45,-6.55);")
 
 for i in range(n):
     for j in range(n):
