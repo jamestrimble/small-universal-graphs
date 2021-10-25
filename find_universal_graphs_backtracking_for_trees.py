@@ -1,6 +1,13 @@
 import sys
 
-from universalgraphs import Graph, induced_subgraph_isomorphism
+from universalgraphs import Graph, induced_subgraph_isomorphism, from_graph6_bytes
+
+def read_all_graphs(n):
+    with open("graphs/graph{}.g6".format(n), "rb") as f:
+        for line in f:
+            g = line.strip()
+            yield from_graph6_bytes(g)
+
 
 def read_all_trees(n):
     with open("graphs/tree{}.all.txt".format(n), "r") as f:
@@ -39,34 +46,33 @@ def deg_seq(G):
     return sorted([sum(row) for row in G._adj_mat])
 
 
-def search(nT, nP, patterns, universal_graphs, vals):
+def search(nT, nP, patterns, small_graphs, universal_graphs, vals):
     if len(vals) <= 2:
         print(vals)
     n = len(vals)
-    if n == nT - 1:
+    if n == nP + 1:
         T = initial_graph(nT, nP)
-        for v, ww in enumerate(vals):
-            if v == 0:
-                for i in range(ww):
+        for v, ww in enumerate(vals[:-1]):
+            for i in range(nT - nP):
+                if (ww & (1 << i)):
                     T.add_edge(v, nT - i - 1)
-            else:
-                for i in range(nT - nP):
-                    if (ww & (1 << i)):
-                        T.add_edge(v, nT - i - 1)
+        small_graph = small_graphs[vals[-1]]
+        for v in range(nT - nP):
+            for w in range(v):
+                if small_graph._adj_mat[v][w]:
+                    T.add_edge(v + nP, w + nP)
         if all(iso(P, T) for P in patterns):
             try_adding_universal_graph((T, deg_seq(T)), universal_graphs)
         return
-    if n == 0:
-        top = nT - nP + 1
-    elif n == 1:
+    if n <= 1:
         top = 1 << (nT - nP)
     elif n < nP:
         top = vals[-1] + 1
     else:
-        top = 1 << (nT - n - 1)
+        top = len(small_graphs)
     for i in range(top):
         vals.append(i)
-        search(nT, nP, patterns, universal_graphs, vals)
+        search(nT, nP, patterns, small_graphs, universal_graphs, vals)
         vals.pop()
 
 
@@ -82,8 +88,10 @@ def start():
 
     patterns.sort(key=lambda G: -len(induced_subgraph_isomorphism(G, G, True)))
 
+    small_graphs = [G for G in read_all_graphs(nT - nP)]
+
     universal_graphs = []
-    search(nT, nP, patterns, universal_graphs, [])
+    search(nT, nP, patterns, small_graphs, universal_graphs, [])
     print(len(universal_graphs))
 
 
