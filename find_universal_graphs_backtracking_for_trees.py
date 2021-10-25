@@ -20,10 +20,18 @@ def read_all_trees(n):
             yield G
 
     
-def initial_graph(n, nP):
-    G = Graph(n)
+def make_target_graph(nT, nP, vals, small_graph):
+    G = Graph(nT)
     for v in range(1, nP):
         G.add_edge(0, v)
+    for v, ww in enumerate(vals):
+        for i in range(nT - nP):
+            if (ww & (1 << i)):
+                G.add_edge(v, nT - i - 1)
+    for v in range(nT - nP):
+        for w in range(v):
+            if small_graph._adj_mat[v][w]:
+                G.add_edge(v + nP, w + nP)
     return G
 
     
@@ -50,30 +58,17 @@ def search(nT, nP, patterns, small_graphs, universal_graphs, vals):
     if len(vals) <= 2:
         print(vals)
     n = len(vals)
-    if n == nP + 1:
-        T = initial_graph(nT, nP)
-        for v, ww in enumerate(vals[:-1]):
-            for i in range(nT - nP):
-                if (ww & (1 << i)):
-                    T.add_edge(v, nT - i - 1)
-        small_graph = small_graphs[vals[-1]]
-        for v in range(nT - nP):
-            for w in range(v):
-                if small_graph._adj_mat[v][w]:
-                    T.add_edge(v + nP, w + nP)
-        if all(iso(P, T) for P in patterns):
-            try_adding_universal_graph((T, deg_seq(T)), universal_graphs)
-        return
     if n <= 1:
-        top = 1 << (nT - nP)
+        for i in range(1 << (nT - nP)):
+            search(nT, nP, patterns, small_graphs, universal_graphs, vals + [i])
     elif n < nP:
-        top = vals[-1] + 1
+        for i in range(vals[-1] + 1):
+            search(nT, nP, patterns, small_graphs, universal_graphs, vals + [i])
     else:
-        top = len(small_graphs)
-    for i in range(top):
-        vals.append(i)
-        search(nT, nP, patterns, small_graphs, universal_graphs, vals)
-        vals.pop()
+        for small_graph in small_graphs:
+            T = make_target_graph(nT, nP, vals, small_graph)
+            if all(iso(P, T) for P in patterns):
+                try_adding_universal_graph((T, deg_seq(T)), universal_graphs)
 
 
 def start():
