@@ -82,6 +82,9 @@
 \maketitle
 %
 \begin{abstract}
+We present exact and heuristic algorithms that find, for a given family
+of graphs, a graph that contains each member of the family as an induced
+subgraph.
 For $0 \leq k \leq 6$, we give the minimum number of vertices $f(k)$ in a graph containing all
 $k$-vertex graphs as induced subgraphs, and show
 that $16 \leq f(7) \leq 18$.  For $0 \leq k \leq 5$, we also give the counts of
@@ -276,13 +279,12 @@ The entry point is the function $\FuncSty{AllInducedUniversalGraphs}()$.
 of $n$-vertex graphs, and adds to the collection $\calG$ those that are induced universal
 for $\calF$.  The function $\FuncSty{IsInducedUniversal}()$ tests
 whether a graph $G$ is induced universal for $\calF$ by checking for
-each $H \in \calF$ that $H$ is isomorphic to a subgraph of $G$.
+each $H \in \calF$ that $H$ is isomorphic to an induced subgraph of $G$.
 
 For the collection $\calF(n)$ of candidate graphs on \lineref{TryEachG}, our
 implementation uses graphs generated using Brendan McKay's \texttt{geng}
-program \cite{DBLP:journals/jal/McKay98}
-\footnote{The program \texttt{geng} is distributed
-with Nauty; we used version 27.r3.\url{https://pallini.di.uniroma1.it/}}.
+program \cite{DBLP:journals/jal/McKay98}.\footnote{The program \texttt{geng} is distributed
+with Nauty; we used version 27.r3.\url{https://pallini.di.uniroma1.it/}}
 These are read in \texttt{graph6}
 format\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/formats.html}}
 from a text file as the program proceeds, and therefore only one candidate
@@ -290,7 +292,7 @@ graph at a time needs to be stored in memory.
 
 Our implementation is written purely in Python and run using the CPython
 interpreter.
-On line \lineref{CallSubIso}, the function $\FuncSty{InducedSubIso}()$
+On \lineref{CallSubIso}, the function $\FuncSty{InducedSubIso}()$
 calls an algorithm for the induced
 subgraph isomorphism decision problem; for this,
 our program uses an implementation by the author of the McSplit
@@ -299,7 +301,7 @@ McSplit was designed for
 the more general maximum common induced subgraph problem,
 but it can be used for induced subgraph isomorphism with a simple
 modification: we backtrack when the calculated upper bound
-on the order of a common subgraph is less the order of either
+on the order of a common subgraph is less the order of the smaller
 of the two input graphs.
 This method for solving
 the subgraph isomorphism problem is very fast if both input graphs
@@ -318,7 +320,7 @@ an experimental comparison with other subgraph isomorphism solvers.
 \DontPrintSemicolon
 \nl $\FuncSty{IsInducedUniversal}(\calF,G)$ \;
 \nl \KwData{A family of graphs $\calF$ and a graph $G$.}
-\nl \KwResult{A logical value indicating whether $G$ is induced universal for $\calF$.}
+\nl \KwResult{A boolean value indicating whether $G$ is induced universal for $\calF$.}
 \nl \Begin{
 \nl    \For {$H \in \calF$ \label{HLoop}}{
 \nl      \lIf {$\neg\FuncSty{InducedSubIso}(H, G)$\label{CallSubIso}}{$\KwSty{return}$~$\AlgVar{false}$}
@@ -350,7 +352,7 @@ in graph6 format, are available from
 
 \section{Iteration order for $\calF$}\label{sec:iteration-order}
 
-When deciding on \lineref{HLoop} of the algorithm whether a graph $G$ contains
+When determining on \lineref{HLoop} of \Cref{alg:brute-force} whether a graph $G$ contains
 every element of $\calF$ as an induced subgraph, are some iteration orders of
 $\calF$ better than others?  For a graph $G$ that contains a copy of each
 element of $\calF$, the iteration order is of no importance;
@@ -368,8 +370,9 @@ As Diaconis and Chatterjee note, \cite{chatterjee2021isomorphisms}, the complete
 graph $K_n$ is the `hardest' graph of order $n$ for a random graph to contain.
 This led me
 to consider two orderings in which $K_k$ and its complement $I_k$ come
-first.  The first of these approaches is to the sort $\calF(k)$ such that
-graphs with large automorphism groups appear first.  (Intuitively, if a graph
+first.  The first of these approaches is to sort $\calF(k)$ in descending
+order of automorphism count, so that
+graphs with large automorphism groups appear first in the list.  (Intuitively, if a graph
 has few automorphisms then we can generate many different labelled graphs
 by permuting the vertex labels.  This gives more `opportunities' for the
 graph to be an induced subgraph of $G$.)
@@ -392,7 +395,8 @@ On the horizontal axes we have each of our two measures: size of automorphism gr
 in the first plot and `extremeness' of edge count in the second plot.
 As we can see from the first plot, the automorphism measure has a strong correlation
 with the number of graphs containing $G$ as an induced subgraph, suggesting that
-sorting by this measure could be a good strategy.
+sorting by this measure could be a good strategy for reducing the number of
+subgraph isomorphism calls in \Cref{alg:brute-force}.
 
 \begin{figure}[htb]
     \centering
@@ -422,11 +426,11 @@ in a reduced number of calls to the subgraph isomorphism function
 in \Cref{alg:brute-force}.  As our first test case, we consider 
 $\FuncSty{AllInducedUniversalGraphs}(\calF(5),9)$ ---
 finding all induced universal graphs of order 9 for the family of
-all graphs of order 5.  We consider four strategies:
+all graphs of order 5.  We consider four strategies.
 
 The first two of these are the automorphism-count and `edge-count extremeness'
 measures described above.  The fourth strategy is a random order.
-Finally, we used one further strategy, which we call ``almost random''.
+Finally, we used one additional strategy that we call ``almost random''.
 Under this strategy, $I_5$ and $K_5$ are placed at the start of the list,
 and the remaining 32 graphs are in random order.  This strategy was not
 intended to be useful in practice, but to give insight into whether
@@ -489,7 +493,7 @@ are checked under the automorphisms strategy (with the order within each
 row chosen randomly).  Note that the two graphs in the second row are
 similar to the graphs in the first row; the first graphs in each of the first
 two rows, for example, have a maximum common induced subgraph of size 4.
-It seems likely that if a graph contains both graphs in the first row of
+It seems likely that if a graph contains both of the graphs in the first row of
 the table as induced subgraphs, then it may also contain the graphs in the
 second row. The almost-random strategy is likely to choose graphs
 that are quite different from a clique and an independent set after the first
@@ -505,7 +509,7 @@ for induced universal graphs of \emph{all} graphs of a given order,
 it is plausible that it will be less effective if $\calF$ is a strict
 subset of $\calF(k)$, and in particular if it includes
 neither $I_k$ nor $K_k$.  \Cref{fig:second-experiment-using-sample}
-examines this claim.  We generated 50 subsets of $\calF(5)$,
+examines this claim.  We generated 50 subsets $\calF$ of $\calF(5)$ by random selection,
 with each subset containing exactly half of the elements of $\calF(5)$.
 For each of these, we ran $\FuncSty{AllInducedUniversalGraphs}(\calF,9)$
 using each of the four strategies.  The `automorphisms' strategy
@@ -567,9 +571,10 @@ cases; therefore, we use this strategy for the remainder of the paper.
 
 \section{Results for \texorpdfstring{$k \leq 5$}{k<=5}}\label{sec:results5}
 
-Recall that $f(k)$ is the order of a minimal induced universal graph for
+Recall that $\calF(k)$ is the family of all graphs of order $k$, $f(k)$ is
+the order of a minimal induced universal graph for
 $\calF(k)$, and $F(k)$ is the number of non-isomorphic graphs of that order
-for $\calF(k)$ that are induced universal for $\calF(k)$.  This section
+that are induced universal for $\calF(k)$.  This section
 presents values of $f(k)$ and $F(k)$ for $0 \leq k \leq 5$, computed
 using \Cref{alg:brute-force}. The results are shown in 
 Table~\ref{tab:graphresults}.  To my knowledge, the value of
@@ -809,8 +814,8 @@ respectively.
 \section{\texorpdfstring{$f(6) = 14$}{f(6)=14}}\label{sec:f6}
 
 This section shows that $f(6) = 14$.  We begin with the lower bound.
-For $k \geq 6$, we can increase by 2 the lower bound by ``bof''.  In particular,
-this means that $f(6) \geq 14$.
+For $k \geq 6$, we can increase by 2 the lower bound --- $f(k) \geq 2k$
+for $k \geq 4$ --- cited in the previous section.
 
 \begin{proposition}\label{f6proposition}
     $f(k) \geq 2k + 2$ for all $k \geq 6$.
@@ -818,8 +823,9 @@ this means that $f(6) \geq 14$.
 \begin{proof}
 
     Suppose that $G$ is an induced universal graph for the family of all graphs
-    on $k$ vertices, and that $G$ has no more than $2k + 1$ vertices.  Graph
-    $G$ must have $K_k$ and $I_k$ as induced sugraphs.  Clearly, this clique and
+    on $k$ vertices, and that $G$ has no more than $2k + 1$ vertices.  Graphs
+    $K_k$ and $I_k$ are both members of $\calF(k)$, and therefore must
+    be induced sugraphs of $G$.  Clearly, this clique and
     independent set may overlap by no more than one vertex, so their union must
     contain at least $2k - 1$ vertices.  Therefore it is possible to partition
     the vertices of $G$ into three sets: a clique $S_1$, an independent set
@@ -831,42 +837,6 @@ this means that $f(6) \geq 14$.
 
 \begin{figure}[htb]
     \centering
-
-% \begin{tikzpicture}[>=latex',line join=bevel]
-%   \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.5cm]
-%   \pgfsetlinewidth{.5bp}
-%   \node at (0,2.9) (1) {};
-%   \node at (0,2) (2) {};
-%   \node at (0,1.1) (3) {};
-%   \node at (1.1,2.9) (4) {};
-%   \node at (1.1,2) (5) {};
-%   \node at (1.1,1.1) (6) {};
-%   \draw (1) -- (2) -- (3);
-%   \draw (3) to [out=140,in=220] (1);
-%   \draw (4) -- (5) -- (6);
-%   \draw (6) to [out=40,in=-40] (4);
-%   \draw (1) -- (4);
-%   \draw (1) -- (5);
-%   \draw (1) -- (6);
-%   \draw (2) -- (4);
-%   \draw (2) -- (5);
-%   \draw (2) -- (6);
-%   \draw (3) -- (4);
-%   \draw (3) -- (5);
-%   \draw (3) -- (6);
-% \end{tikzpicture}
-% \qquad \qquad
-% \begin{tikzpicture}
-%   \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.5cm]
-%   \pgfsetlinewidth{.5bp}
-%   \node at (0,2.9) (1) {};
-%   \node at (0,2) (2) {};
-%   \node at (0,1.1) (3) {};
-%   \node at (1.1,2.9) (4) {};
-%   \node at (1.1,2) (5) {};
-%   \node at (1.1,1.1) (6) {};
-% \end{tikzpicture}
-% \qquad \qquad
 \begin{tikzpicture}[>=latex',line join=bevel]
   \tikzstyle{every node}=[draw, circle, inner sep=1pt, minimum size=.5cm]
   \pgfsetlinewidth{.5bp}
@@ -905,7 +875,7 @@ this means that $f(6) \geq 14$.
 \caption{If $k > 5$ and $G$ is a graph on $2k + 1$ or fewer vertices, then
 $G$ cannot have as induced subgraphs all four of the following graphs: the
 clique $K_k$, the independent set $I_k$, and
-the two graphs shown. See the the proof of Proposition~\ref{f6proposition}}.
+the two graphs shown. See the the proof of Proposition~\ref{f6proposition}.}
 \label{fig:boundproof}
 \end{figure}
 
@@ -925,6 +895,8 @@ the two graphs shown. See the the proof of Proposition~\ref{f6proposition}}.
     $G$, and therefore must not be adjacent in $G$.  Since we previously showed that
     these vertices are adjacent in $G$, we have a contradiction.
 \end{proof}
+
+\Cref{f6proposition} implies that $f(6) \geq 14$.
 
 To find an induced universal graph for $\calF(6)$ in order to give an upper bound
 on $f(6)$, we use the following local search
@@ -1021,21 +993,24 @@ $\AlgVar{maxIter}$ iterations of a step that randomly modifies graph $G$,
 and accepts the modification if it causes the number of graphs in $\calF(6)$ that
 are induced subgraphs of $G$ to increase.
 The attempted-improvement step chooses a random pair of vertices $\{v, w\}$,
-both of which are not in the same coloured square of 
+both of which are not in the same coloured square
 in \Cref{fig:heuristic-regions}, and
 ``flips'' the status of the edge between these two vertices: the edge is added if it
-not present, and removed otherwise.
+is not present, and removed otherwise.
 After each flip, we count the number of graphs on 6 vertices (from a total
 of 156 graphs) that are
 isomorphic to an induced subgraph of our 14-vertex graph.  If the most recent flip
-increase this number or left it unchanged, we accept it.  After $\AlgVar{maxIter}$
-flips, we restart the algorithm with a new random graph.
+increased this number or left it unchanged, we accept the modification
+to the graph.  After $\AlgVar{maxIter}$
+flips, we restart the algorithm with a new randomly-generated graph.
 
 Our implementation has two optimisations that are not shown in \Cref{alg:heuristic}.
 First, scores are cached in a dictionary data structure, so that we can quickly look
 up the score of a graph that has already been visited. This data structure is
-cleared on return from $\FuncSty{FindInducedUniversalGraph'}$.
-(An alternative approach, which we have not implemented, would be to
+cleared on return from $\FuncSty{FindInducedUniversalGraph'}$, in order to
+bound the program's memory use.
+(An alternative approach, which we have not implemented but which
+may be useful in order to explore more of the space of possible graphs, would be to
 use a tabu list \cite{DBLP:books/daglib/0093574} to avoid revisiting graphs
 that have been visited recently.)
 
@@ -1043,10 +1018,11 @@ The second optimisation often avoids the need to visit every graph in $\calF(6)$
 during calls to $\FuncSty{Score}()$.  Rather than beginning our count at 0
 and incrementing it for every graph in $\calF(6)$ that is an induced subgraph
 of $G$, we begin our count at $|\calF(6)|$ and decrement it for every
-graph that is \emph{not} an induced subgraph of $G$.  This allows us to return
+graph that is \emph{not} an induced subgraph of $G$.  We can then return
 early from the function with a score of $-1$ as soon as the counter variable
-falls below the score of $G$ prior to the most recent edge-flip, since any
-score below that value results in the most recent change being rejected.
+falls below the score obtained by the graph prior to the most recent edge-flip.
+This does not affect the behaviour of the hill-climbing search, since any
+score below the previous graph's score results in the most recent change being rejected.
 
 By running this search algorithm, we quickly found the graph of order 14 whose adjacency
 matrix is shown in \Cref{fig:adjmat14}.  This is induced universal for $\calF(6)$;
@@ -1118,6 +1094,44 @@ seven-vertex graphs}
 
 \section{Trees}\label{sec:trees}
 
+To generate induced universal graphs for families of
+all trees on $k$ vertices, we tried two approaches.
+The first approach was to run \Cref{alg:brute-force}, with the family
+$\calF$ of order-$k$ trees loaded from
+a list published by Brendan
+McKay.\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/trees.html}}
+The second approach, described in the following subsection, generates
+only candidate graphs that contain a star --- one of the elements
+of $\calF$ ---as an induced subgraph.  The final part of this section
+gives results generated using these two methods, along with additional
+upper bounds generated using a specialised version of our hill-climbing
+algorithm.
+
+\subsection{The completion method}
+
+In our second approach to finding induced universal graphs for the
+family of all trees on $k$ vertices, we embed the star $S_{k-1}$ --- which must be
+present since it is a tree on $k$ vertices --- in the top left position
+of the adjacency matrix, then systematically try all possible ways to complete
+the adjacency matrix.  For each completed adjacency matrix, we test whether
+the graph contains as an induced subgraph each tree in our family.
+If it does, and if the graph is not isomorphic to any induced universal
+graph that has already been found, we add it to our collection of graphs.
+We will refer to this as the ``naive completion'' method.
+
+Because the naive completion method has to test a huge number of graphs,
+many pairs of which are isomorphic, we created an improved version of the
+algorithm, which we will refer to as the ``symmetry breaking completion''
+method.  Our description refers to the adjacence matrix in
+\Cref{fig:regions-for-trees}.
+This adds two symmetry-breaking constraints on the adjacency matrix.
+The first of these constraints concerns the grey shaded region at the bottom-right
+of the adjacency matrix, which has $n - k$ rows and columns.  Rather than
+trying all $2^{n-k \choose 2}$ possible entries for this region of the
+adjacency matrix, we use a list containing a canonical adjacency matrix
+for each possible graph of order $n-k$, and we require that the shaded
+region be equal to one of these adjacency matrices.
+
 \begin{figure}[h!]
     \centering
     \footnotesize
@@ -1130,42 +1144,6 @@ seven-vertex graphs}
         ``symmetry breaking completion'' method. For this example, $n=11$ and $k=7$.}
 \label{fig:regions-for-trees}
 \end{figure}
-
-To generate induced universal graphs for families of
-all trees on $k$ vertices, we tried two approaches.
-The first approach was to run \Cref{alg:brute-force}, with the family
-$\calF$ of order-$k$ trees loaded from
-a list of trees published by Brendan
-McKay.\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/trees.html}}
-The second approach, described in the following subsection, generates
-only candidate graphs that contain a star --- one of the elements
-of $\calF$ ---as an induced subgraph.  The final part of this section
-gives results generated using these two methods, along with additional
-upper bounds generated using a specialised version of our hill-climbing
-algorithm.
-
-\subsection{The completion method}
-
-Our second approach was to embed the star $S_{k-1}$ --- which must be
-present since it is a tree on $k$ vertices --- in the top left position
-of the adjacency matrix, then systematically try all possible ways to complete
-the adjacency matrix.  For each completed adjacency matrix, we test whether
-the graph contains as an induced subgraph each tree in our family.
-If it does, and if the graph is not isomorphic to any induced universal
-graph that has already been found, we add it to our collection of induced
-universal graphs.
-We will refer to this as the ``naive completion'' method.
-
-Because the naive completion method has to test a huge number of graphs,
-many pairs of which are isomorphic, we created an improved version of the
-algorithm, which we will refer to as the ``symmetry breaking completion''
-method.  This adds two symmetry-breaking constraints on the adjacency matrix.
-The first of these constraints concerns the grey shaded region at the bottom-right
-of the adjacency matrix, which has $n - k$ rows and columns.  Rather than
-trying all $2^{n-k \choose 2}$ possible entries for this region of the
-adjacency matrix, we use a list containing a canonical adjacency matrix
-for each possible graph of order $n-k$, and we require that the shaded
-region be equal to one of these adjacency matrices.
 
 The second symmetry-breaking constraint concerns the yellow shaded region
 in \Cref{fig:regions-for-trees}. Each row of this region has $n-k$ entries,
@@ -1196,7 +1174,7 @@ collection.\footnote{An efficient method to ensure that isomorphic
 graphs are not stored in $\calG$ would be label the vertices
 of a graph $G$ canonically before adding it to the collection
 \cite{DBLP:journals/jsc/McKayP14}, and to store the collection as a
-hash set.  Because this part of the prograph is not a performance
+hash set.  Because this part of the program is not a performance
 bottleneck, and to miminise software dependencies, our implementation
 uses the simpler approach of testing whether $G$ is isomorphic
 to each existing member of $\calG$, in turn.}
@@ -1235,7 +1213,7 @@ to each existing member of $\calG$, in turn.}
 \nl    $\KwSty{return}$~$\calG$ \;
     }
 \medskip
-\nl $\FuncSty{Start}(n,k)$ \;
+\nl $\FuncSty{FindAllInducedUniversalGraphsForTrees}(n,k)$ \;
 \nl \KwData{Natural numbers $n$ and $k$ such that $k<n$}
 \nl \KwResult{The set of all graphs of order $n$ that are induced universal for
     the family of trees of order $k$.}
@@ -1247,9 +1225,10 @@ to each existing member of $\calG$, in turn.}
 \label{alg:completion}
 \end{algorithm}
 
-Because of the following proposition, the symmetry breaking completion
-method finds, up to isomorphism, all induced universal graphs for the family
-of trees on $k$ vertices.
+We claim that although the symmetry breaking completion method does not
+visit every adjacency matrix visited by the naive completion method,
+it finds, up to isomorphism, all induced universal graphs for the family
+of trees on $k$ vertices.  This is shown by the following proposition.
 
 \begin{proposition}
     Let $n, k$ be given, and let $G$ be a graph on $n$ vertices that is
@@ -1264,7 +1243,7 @@ of trees on $k$ vertices.
     contains the star $S_{k-1}$ as an induced subgraph.  Arbitrarily
     choose one such star in $G$ and give the label 1 to its vertex of degree
     $k-1$.  Its remaining vertices will be given the labels $\{2, \dots, k\}$,
-    in an order we will specify later.
+    in an order that will be specified in the next paragraph.
     The remaining $n-k$ vertices of $G$ induce a subgraph isomorphic
     to one of the adjacency matrices in $\mathcal{M}$; call this matrix $M$.
     By choosing an appropriate relabelling of the $n-k$ vertices of $G$,
@@ -1290,8 +1269,38 @@ able to show that $t(8) > 12$.  We confirmed
 the results for $k \leq 6$ using \Cref{alg:brute-force}.
 
 Table~\ref{tab:treeresults} gives the order $t(k)$ of a minimal induced universal graph for
-the family of $k$-vertex trees, and the number $T(k)$ of such graphs.  Figure~\ref{fig:trees}
-shows one of the 66 minimal induced universal graphs for the family of 6-vertex trees.
+the family of $k$-vertex trees, and the number $T(k)$ of such graphs.  Figure~\ref{fig:tree-example}
+shows one of the 687 minimal induced universal graphs for the family of 7-vertex trees.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{r r r}
+ \toprule
+ $k$ & $t(k)$ & $T(k)$ \\ [0.5ex]
+ \midrule
+ 1 & 1 & 1 \\
+ 2 & 2 & 1 \\
+ 3 & 3 & 1 \\
+ 4 & 5 & 2 \\
+ 5 & 7 & 18 \\
+ 6 & 9 & 66 \\
+ 7 & 11 & 687 \\
+ \bottomrule
+\end{tabular}
+\caption{For each $k$, $t(k)$ is the minimum order of a graph containing all $k$-vertex trees as
+induced subgraphs, and $T(k)$ is the number of distinct $t(k)$-vertex graphs that contain
+all $k$-vertex trees as induced subgraphs.}
+\label{tab:treeresults}
+\end{table}
+
+\begin{figure}[htb]
+    \centering
+    \input{img/tree-example}
+\caption{An induced universal graph for the family of all
+    trees on 7 vertices.  In each copy of the graph, one of the
+    11 trees of order 7 is highlighted.}.
+\label{fig:tree-example}
+\end{figure}
 
 To obtain upper bounds on $t(k)$ for larger values of $k$, we use a version of
 \Cref{alg:heuristic} with minor modifications.  Instead of initially embedding
@@ -1345,115 +1354,6 @@ the results in the tables.
 I would like to thank Brendan McKay for helpful feedback on this paper, and Persi
 Diaconis for introducing me to induced universal graphs and for interesting email
 discussions on related topics.
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{r r r}
- \toprule
- $k$ & $t(k)$ & $T(k)$ \\ [0.5ex]
- \midrule
- 1 & 1 & 1 \\
- 2 & 2 & 1 \\
- 3 & 3 & 1 \\
- 4 & 5 & 2 \\
- 5 & 7 & 18 \\
- 6 & 9 & 66 \\
- 7 & 11 & 687 \\
- \bottomrule
-\end{tabular}
-\caption{For each $k$, $t(k)$ is the minimum order of a graph containing all $k$-vertex trees as
-induced subgraphs, and $T(k)$ is the number of distinct $t(k)$-vertex graphs that contain
-all $k$-vertex trees as induced subgraphs.}
-\label{tab:treeresults}
-\end{table}
-
-\begin{figure}[htb]
-    \centering
-\begin{tikzpicture}[>=latex',line join=bevel,scale=.28]
-  \pgfsetlinewidth{.5bp}
-%%
-\pgfsetcolor{black}
-  % Edge: 6 -- 0
-  \draw [] (33.468bp,122.33bp) .. controls (44.467bp,128.89bp) and (59.197bp,137.66bp)  .. (70.288bp,144.27bp);
-  % Edge: 6 -- 1
-  \draw [] (30.834bp,100.1bp) .. controls (39.774bp,91.035bp) and (51.646bp,78.993bp)  .. (60.571bp,69.941bp);
-  % Edge: 7 -- 0
-  \draw [] (108.35bp,211.0bp) .. controls (103.69bp,198.96bp) and (97.434bp,182.81bp)  .. (92.754bp,170.73bp);
-  % Edge: 7 -- 2
-  \draw [] (128.78bp,216.26bp) .. controls (138.81bp,207.93bp) and (152.29bp,196.74bp)  .. (162.31bp,188.42bp);
-  % Edge: 7 -- 3
-  \draw [] (111.85bp,245.92bp) .. controls (109.9bp,257.68bp) and (107.35bp,272.94bp)  .. (105.4bp,284.67bp);
-  % Edge: 8 -- 0
-  \draw [] (134.88bp,109.4bp) .. controls (124.44bp,118.9bp) and (110.07bp,131.98bp)  .. (99.64bp,141.47bp);
-  % Edge: 8 -- 1
-  \draw [] (132.46bp,88.608bp) .. controls (119.73bp,81.799bp) and (101.96bp,72.297bp)  .. (89.227bp,65.491bp);
-  % Edge: 8 -- 2
-  \draw [] (154.41bp,114.43bp) .. controls (159.1bp,127.91bp) and (165.58bp,146.51bp)  .. (170.24bp,159.91bp);
-  % Edge: 8 -- 4
-  \draw [] (166.38bp,93.965bp) .. controls (179.82bp,91.611bp) and (198.11bp,88.409bp)  .. (211.53bp,86.058bp);
-  % Edge: 8 -- 5
-  \draw [] (152.57bp,79.558bp) .. controls (155.7bp,66.447bp) and (159.96bp,48.609bp)  .. (163.09bp,35.509bp);
-  % Node: 0
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (86.17bp,153.73bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 1
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (73.34bp,56.99bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 2
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (176.16bp,176.91bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 3
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (102.42bp,302.6bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 4
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (229.48bp,82.92bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 5
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (167.27bp,18.0bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 6
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (18.0bp,113.12bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 7
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (114.87bp,227.81bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-  % Node: 8
-\begin{scope}
-  \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
-  \pgfsetstrokecolor{strokecol}
-  \draw (148.38bp,97.12bp) ellipse (18.0bp and 18.0bp);
-\end{scope}
-%
-\end{tikzpicture}
-
-\caption{An induced universal graph for the family of all
-trees with 6 vertices}
-\label{fig:trees}
-\end{figure}
 
 \bibliographystyle{abbrv}
 \bibliography{main}
