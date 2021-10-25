@@ -246,7 +246,8 @@ are (1) an ordering strategy to reduce the number of subgraph isomorphism
 calls required by the brute force algorithm; (2) exact values for $f(k)$ $(5 \leq k \leq 6)$
 and $F(k)$ $(1 \leq k \leq 5)$; (3) an upper bound of 18 for $f(7)$; (4) a hill-climbing
 search algorithm to find small (but not necessarily optimal) induced universal graphs
-(5) exact results for families of small trees.
+(5) exact values of the order of a minimal induced universal graph
+for the families of all trees on $k$ vertices, for $1 \leq k \leq 8$.
 
 The sequel is structured as follows.
 Section~\ref{sec:method} describes the basic brute force method.
@@ -258,8 +259,9 @@ values of $f(k)$ and $F(k)$ for $k \leq 5$.
 Section~\ref{sec:f6} gives the value of $f(6)$ and and
 Section~\ref{sec:f7} gives bounds on $f(7)$; in each of these sections, the lower
 bound is proven and a graph obtained by heuristic search demonstrating the
-upper bound is given.  Finally, Section~\ref{sec:trees} gives results for
-families of trees.
+upper bound is given.  Finally, Section~\ref{sec:trees} describes a specialised
+algorithm for families of trees, and gives results for
+these families.
 
 \section{Generating all induced universal graphs}\label{sec:method}
 
@@ -1052,7 +1054,7 @@ therefore, $f(6) \leq 14$.  Combining our two bounds, we have $f(6) = 14$.
 
 \begin{figure}[htb]
 \centering
-\footnotesize
+\scriptsize
 \verb|0 1 1 1 1 1 0 1 1 0 0 0 1 0| \\
 \verb|1 0 1 1 1 1 1 1 1 1 1 0 0 1| \\
 \verb|1 1 0 1 1 1 0 1 1 0 1 0 1 0| \\
@@ -1090,7 +1092,7 @@ Thus we have $16 \leq f(7) \leq 18$.
 
 \begin{figure}[htb]
 \centering
-\footnotesize
+\scriptsize
 \verb|0 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 0 0| \\
 \verb|1 0 1 1 1 1 1 0 1 1 1 0 1 1 0 1 0 0| \\
 \verb|1 1 0 1 1 1 1 1 0 1 0 1 0 0 0 0 0 1| \\
@@ -1116,14 +1118,209 @@ seven-vertex graphs}
 
 \section{Trees}\label{sec:trees}
 
-In order to generate induced universal graphs for families of
-all trees on $k$ vertices, we ran \Cref{alg:brute-force}
-using lists of trees published by Brendan
+\begin{figure}[h!]
+    \centering
+    \footnotesize
+%    \tt
+       \begin{tikzpicture}[>=latex',line join=bevel,scale=.6]
+        \tikzstyle{every node}=[]
+          \input{img/regions-for-trees}
+      \end{tikzpicture}
+    \caption{The adjacency-matrix regions used in the 
+        ``symmetry breaking completion'' method. For this example, $n=11$ and $k=7$.}
+\label{fig:regions-for-trees}
+\end{figure}
+
+To generate induced universal graphs for families of
+all trees on $k$ vertices, we tried two approaches.
+The first approach was to run \Cref{alg:brute-force}, with the family
+$\calF$ of order-$k$ trees loaded from
+a list of trees published by Brendan
 McKay.\footnote{\url{https://users.cecs.anu.edu.au/~bdm/data/trees.html}}
+The second approach, described in the following subsection, generates
+only candidate graphs that contain a star --- one of the elements
+of $\calF$ ---as an induced subgraph.  The final part of this section
+gives results generated using these two methods, along with additional
+upper bounds generated using a specialised version of our hill-climbing
+algorithm.
+
+\subsection{The completion method}
+
+Our second approach was to embed the star $S_{k-1}$ --- which must be
+present since it is a tree on $k$ vertices --- in the top left position
+of the adjacency matrix, then systematically try all possible ways to complete
+the adjacency matrix.  For each completed adjacency matrix, we test whether
+the graph contains as an induced subgraph each tree in our family.
+If it does, and if the graph is not isomorphic to any induced universal
+graph that has already been found, we add it to our collection of induced
+universal graphs.
+We will refer to this as the ``naive completion'' method.
+
+Because the naive completion method has to test a huge number of graphs,
+many pairs of which are isomorphic, we created an improved version of the
+algorithm, which we will refer to as the ``symmetry breaking completion''
+method.  This adds two symmetry-breaking constraints on the adjacency matrix.
+The first of these constraints concerns the grey shaded region at the bottom-right
+of the adjacency matrix, which has $n - k$ rows and columns.  Rather than
+trying all $2^{n-k \choose 2}$ possible entries for this region of the
+adjacency matrix, we use a list containing a canonical adjacency matrix
+for each possible graph of order $n-k$, and we require that the shaded
+region be equal to one of these adjacency matrices.
+
+The second symmetry-breaking constraint concerns the yellow shaded region
+in \Cref{fig:regions-for-trees}. Each row of this region has $n-k$ entries,
+named $x_{i1}, \dots, x_{i,n-k}$.  For our symmetry-breaking constraint, we
+view each row as the binary number $x_{i1}, \dots, x_{i,n-k}$
+(with $x_{i,n-k}$ as the least significant digit), and we insist
+that these numbers are in nondecreasing order; thus
+$x_{21}, \dots, x_{2,n-k} \leq \dots \leq x_{k1}, \dots, x_{k,n-k}$.
+In other words, we impose a lexicographic ordering constraint
+on the rows of this region.
+
+The algorithm with these symmetry-breaking constraints is shown
+in \Cref{alg:completion}.  The call to $\FuncSty{MakeGraph}()$ on
+\lineref{MakeGraphLine} constructs a graph by building its
+adjacency matrix as shown in \Cref{fig:regions-for-trees}.  The
+first $k$ vertices are connected in the form of a star;
+for each $i$ such that $1 \leq i \leq j$, the digits of the binary
+representation of $x_i$
+are assigned to $x_{i1}, \dots, x_{i,n-k}$, and these values
+are placed in the adjacency matrix as shown in the figure.  Finally,
+the small adjacency matrix $M$ is copied to the bottom-right of
+the adjacency matrix of the constructed graph.
+
+For the collection of graphs $\calG$ defined on \lineref{DefineSetG},
+isomorphic graphs are considered identical.  Thus, we only add a graph
+to $\calG$ if it is not isomorphic to any existing member of the
+collection.\footnote{An efficient method to ensure that isomorphic
+graphs are not stored in $\calG$ would be label the vertices
+of a graph $G$ canonically before adding it to the collection
+\cite{DBLP:journals/jsc/McKayP14}, and to store the collection as a
+hash set.  Because this part of the prograph is not a performance
+bottleneck, and to miminise software dependencies, our implementation
+uses the simpler approach of testing whether $G$ is isomorphic
+to each existing member of $\calG$, in turn.}
+
+\begin{algorithm}[h!]
+\DontPrintSemicolon
+\nl $\FuncSty{Search}(n,k,(x_1, \dots, x_j))$ \;
+\nl \KwData{Natural numbers $n$ and $k$, and a sequence
+    $(x_1, \dots, x_j))$ of nonnegative integers such that the binary
+    representation of each $x_i$ represents entries $x_{i1}, \dots, x_{i,n-k}$
+    of an adjacency matrix, as shown in \Cref{fig:regions-for-trees}}
+\nl \KwResult{The set of all order-$n$ graphs that are induced universal
+    for the family of trees of order $k$, and have an adjacency matrix
+    given by $\FuncSty{MakeGraph}(n,k,X,M)$ for some completion
+    $X$ of $(x_1, \dots, x_j)$ and some $M \in \mathcal{M}(n-k)$}
+\nl \Begin{
+\nl    $\calG \gets \emptyset$ \label{DefineSetG} \;
+\nl    \If {$j \leq 1$}{
+\nl      \For {$i \in \{0, \dots, 2^{n-k} - 1\}$}{
+\nl        $\calG \gets \calG \cup \FuncSty{Search}(n,p,(x_1, \dots, x_j, i))$
+  }
+}
+\nl    \ElseIf {$j \leq k$}{
+\nl      \For {$i \in \{0, \dots, x_j\}$}{
+\nl        $\calG \gets \calG \cup \FuncSty{Search}(n,p,(x_1, \dots, x_j, i))$
+  }
+}
+\nl    \Else {
+\nl      \For {$M \in \mathcal{M}(n-k)$}{
+\nl        $G \gets \FuncSty{MakeGraph}(n, k, (x_1, \dots, x_j), M)$ \label{MakeGraphLine}\;
+\nl        \If {$G$ contains every tree of order $k$ as an induced subgraph}{
+\nl          $\calG \gets \calG \cup \{G\}$ \;
+  }
+}
+}
+\nl    $\KwSty{return}$~$\calG$ \;
+    }
+\medskip
+\nl $\FuncSty{Start}(n,k)$ \;
+\nl \KwData{Natural numbers $n$ and $k$ such that $k<n$}
+\nl \KwResult{The set of all graphs of order $n$ that are induced universal for
+    the family of trees of order $k$.}
+\nl \Begin{
+\nl    $\KwSty{return}$~$\FuncSty{Search}(n,k,())$ \;
+    }
+\caption{The symmetry-breaking completion algorithm for finding all graphs of order $n$
+    that are induced universal for the family of all order-$k$ trees}
+\label{alg:completion}
+\end{algorithm}
+
+Because of the following proposition, the symmetry breaking completion
+method finds, up to isomorphism, all induced universal graphs for the family
+of trees on $k$ vertices.
+
+\begin{proposition}
+    Let $n, k$ be given, and let $G$ be a graph on $n$ vertices that is
+    induced universal for the family of trees of order $k$.  Let $\mathcal{M}$
+    be a set of canonical adjacency matrices for $\calF(n-k)$.  There is
+    a graph on $n$ vertices numbered $1, \dots, n$ that is isomorphic
+    to $G$ and satisfies the two symmetry-breaking constraints described
+    above.
+\end{proposition}
+\begin{proof}
+    Since $G$ is induced universal for the family of trees of order $k$, it
+    contains the star $S_{k-1}$ as an induced subgraph.  Arbitrarily
+    choose one such star in $G$ and give the label 1 to its vertex of degree
+    $k-1$.  Its remaining vertices will be given the labels $\{2, \dots, k\}$,
+    in an order we will specify later.
+    The remaining $n-k$ vertices of $G$ induce a subgraph isomorphic
+    to one of the adjacency matrices in $\mathcal{M}$; call this matrix $M$.
+    By choosing an appropriate relabelling of the $n-k$ vertices of $G$,
+    the region of the adjacency matrix corresponding to these vertices
+    can be made equal to $M$.  Thus, the first symmetry-breaking constraint
+    is satisfied.
+
+    The second symmetry-breaking constraint can now be satisfied by assigning
+    labels $\{2, \dots, k\}$ to the degree-1 vertices of the star $S_{k-1}$
+    in such an order that their adjacencies to the vertices outside the star,
+    viewed as binary numbers, are in lexicographic order.
+\end{proof}
+
+\subsection{Results for families of trees}
+
+The symmetry-breaking completion method is much faster than \Cref{alg:brute-force}.
+For $n=9$ and $k=6$, for example, the completion method takes 9 seconds whereas
+the brute-force algorithm takes 46 seconds. The difference in run-times becomes
+even greater for larger values of $n$ and $k$.
+Using the symmetry-breaking completion method,
+we were able to find the values of $t(k)$ and $T(k)$ for $k \leq 7$. We were also
+able to show that $t(8) > 12$.  We confirmed
+the results for $k \leq 6$ using \Cref{alg:brute-force}.
 
 Table~\ref{tab:treeresults} gives the order $t(k)$ of a minimal induced universal graph for
 the family of $k$-vertex trees, and the number $T(k)$ of such graphs.  Figure~\ref{fig:trees}
 shows one of the 66 minimal induced universal graphs for the family of 6-vertex trees.
+
+To obtain upper bounds on $t(k)$ for larger values of $k$, we use a version of
+\Cref{alg:heuristic} with minor modifications.  Instead of initially embedding
+a clique and an independent set as in \Cref{fig:heuristic-regions}, we embed
+a single tree --- the $k$-vertex star $S_{k-1}$ --- as shown in
+\Cref{fig:heuristic-regions-for-trees}.  Each possible edge marked with a dot
+in the figure is added with probability 0.1.
+
+\begin{figure}[h!]
+    \centering
+    \footnotesize
+%    \tt
+       \begin{tikzpicture}[>=latex',line join=bevel,scale=.4]
+        \tikzstyle{every node}=[]
+          \input{img/heuristic-regions-for-trees}
+      \end{tikzpicture}
+    \caption{The adjacency matrix used in our heuristic algorithm when searching
+        for an induced universal graph of order 9 for the set of all trees
+        of order 6.  The blue
+        region, a star with 6 vertices, remains unchanged as the algorithm runs.
+        The remaining possible edges, marked $\boldsymbol{\cdot}$,
+        are flipped between 0 and 1 as the algorithm progresses.}
+\label{fig:heuristic-regions-for-trees}
+\end{figure}
+
+Using this heuristic algorithm, we were able to find induced universal graphs
+to demonstrate that $t(8) \leq 13$, $t(9) \leq 15$ and $t(10) \leq 18$.
+Since we have matching lower and upper bounds for $t(8)$, we can state
+that $t(8) = 13$.
 
 \section{Verification}\label{sec:verification}
 
@@ -1161,6 +1358,7 @@ discussions on related topics.
  4 & 5 & 2 \\
  5 & 7 & 18 \\
  6 & 9 & 66 \\
+ 7 & 11 & 687 \\
  \bottomrule
 \end{tabular}
 \caption{For each $k$, $t(k)$ is the minimum order of a graph containing all $k$-vertex trees as
