@@ -2,6 +2,11 @@ import sys
 
 from universalgraphs import Graph, induced_subgraph_isomorphism, from_graph6_bytes
 
+try:
+    import igraph
+except:
+    pass
+
 def read_all_graphs(n):
     with open("graphs/graph{}.g6".format(n), "rb") as f:
         for line in f:
@@ -35,8 +40,25 @@ def make_target_graph(nT, nP, vals, small_graph):
     return G
 
     
+def to_igraph_graph(G):
+    g = igraph.Graph()
+    g.add_vertices(G.number_of_nodes())
+    for v in range(G.number_of_nodes()):
+        for w in range(v):
+            if G.adj_row(v)[w]:
+                g.add_edges([(v, w)])
+    return g
+
+
+def igraph_induced_subgraph_isomorphism(G, H):
+    g = to_igraph_graph(G)
+    h = to_igraph_graph(H)
+    return h.subisomorphic_lad(g, induced=True)
+
 def iso(P, T):
-    return induced_subgraph_isomorphism(P, T)
+    result = bool(induced_subgraph_isomorphism(P, T))
+    assert result == igraph_induced_subgraph_isomorphism(P, T)
+    return result
 
 
 def isomorphic(G, H):
