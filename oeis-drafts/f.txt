@@ -1,0 +1,19 @@
+Minimal number of nodes in a graph that contains every n-node graph as an induced subgraph.  
+
+Values
+0,1,3,5,8,10,14
+
+Offset
+0
+
+Comments
+A graph that contains as an induced subgraph every graph in a family F is called induced universal for F.
+
+16<=a(7)<=18
+
+Example
+The 3-vertex graph with a single edge contains each of the two graphs on 2 vertices as an induced subgraph.  No graph with fewer than 3 vertices contains both of these graphs.  Therefore, a(2)=3.
+
+Links
+J. Trimble. <a href="https://arxiv.org/abs/2109.00075">Induced universal graphs for families of small graphs</a>. arXiv, 2021.
+N. Alon. <a href="https://link.springer.com/article/10.1007/s00039-017-0396-9">Asymptotically optimal induced universal graphs</a>. Geometric and Functional Analysis, 27(1):1–32, 2017.
